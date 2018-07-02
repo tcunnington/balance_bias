@@ -1,8 +1,9 @@
 # Project specific files/dirs
 data/
+intermediate/
+tmp/
 
-
-
+._*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

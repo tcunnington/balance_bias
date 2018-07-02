@@ -1,5 +1,5 @@
 import codecs
-
+import re
 
 def batch_write(wfilename, iterator, batch_size=100):
     """
@@ -61,3 +61,7 @@ def add_newline(itr):
     """
     for item in itr:
         yield item + '\n'
+
+def prep_whitespace(text):
+#     text.replace('\\n', '\n')
+    return re.sub('\s+', ' ', text)
