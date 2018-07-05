@@ -1,5 +1,32 @@
 import codecs
+import os
 import re
+
+class Paths:
+    def __init__(self, subdir):
+        self.subdir = subdir
+
+        # preprocessing
+        self.data_directory              = os.path.join('data', self.subdir)
+        self.intermediate_directory      = os.path.join('intermediate', self.subdir)
+        self.unigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'unigram_sentences_all.txt')
+        self.corpus_filepath             = os.path.join(self.intermediate_directory, 'corpus_all.txt')
+        self.bigram_model_filepath       = os.path.join(self.intermediate_directory, 'bigram_model_all') # bigram.model
+        self.bigram_sentences_filepath   = os.path.join(self.intermediate_directory, 'bigram_sentences_all.txt')
+        self.trigram_model_filepath      = os.path.join(self.intermediate_directory, 'trigram_model_all') # trigram.model
+        self.trigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'trigram_sentences_all.txt')
+        self.trigram_reviews_filepath    = os.path.join(self.intermediate_directory, 'trigram_transformed_corpus_all.txt')
+
+        # models
+        self.trigram_dictionary_filepath = os.path.join(self.intermediate_directory, 'trigram_dict_all.dict')#'trigram.dict')
+        self.trigram_bow_filepath        = os.path.join(self.intermediate_directory, 'trigram_bow_corpus_all.mm')
+        self.lda_model_filepath          = os.path.join(self.intermediate_directory, 'lda.model')
+        # self.topic_names_filepath = os.path.join(intermediate_directory, 'topic_names.pkl')
+        self.ldavis_data_filepath        = os.path.join(self.intermediate_directory, 'ldavis_prepared') # .model
+        self.word2vec_filepath           = os.path.join(self.intermediate_directory, 'word2vec_model_all')
+
+    def data_file(self, file):
+        return os.path.join('..', 'data', self.subdir, file)
 
 def batch_write(wfilename, iterator, batch_size=100):
     """
@@ -21,40 +48,6 @@ def batch_write(wfilename, iterator, batch_size=100):
         f.write(''.join(batch))
         print(u'''Wrote {:,} items to the new txt file '{}'.'''.format(count, wfilename))
 
-
-def punct_space(token):
-    """
-    helper function to eliminate tokens
-    that are pure punctuation or whitespace
-    """
-
-    return token.is_punct or token.is_space
-
-
-def line_review(filename):
-    """
-    generator function to read in reviews from the file
-    and un-escape the original line breaks in the text
-    """
-
-    with codecs.open(filename, encoding='utf_8') as f:
-        for review in f:
-            yield review.replace('\\n', '\n')
-
-
-def lemmatized_sentence_corpus(nlp_model, filename):
-    """
-    generator function to use spaCy to parse reviews,
-    lemmatize the text, and yield sentences
-    """
-
-    for parsed_review in nlp_model.pipe(line_review(filename),
-                                        batch_size=100, n_threads=6, disable=['tagger', 'ner']):
-
-        for sent in parsed_review.sents:
-            yield u' '.join([token.lemma_ for token in sent if not punct_space(token)])
-
-
 def add_newline(itr):
     """
     generator wrapper to add newlines to items of an iterator
@@ -63,5 +56,5 @@ def add_newline(itr):
         yield item + '\n'
 
 def prep_whitespace(text):
-#     text.replace('\\n', '\n')
     return re.sub('\s+', ' ', text)
+

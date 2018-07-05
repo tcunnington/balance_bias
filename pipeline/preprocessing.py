@@ -6,24 +6,9 @@ from gensim.parsing.preprocessing import STOPWORDS
 
 from utils import *
 
-class Paths:
-    def __init__(self, subdir):
-        self.subdir = subdir
+from pipeline.utils import Paths
 
-        self.data_directory              = os.path.join('..', 'data', self.subdir)
-        self.intermediate_directory      = os.path.join('..', 'intermediate', self.subdir)
-        self.unigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'unigram_sentences_all.txt')
-        self.corpus_filepath             = os.path.join(self.intermediate_directory, 'corpus_all.txt')
-        self.bigram_model_filepath       = os.path.join(self.intermediate_directory, 'bigram_model_all')
-        self.bigram_sentences_filepath   = os.path.join(self.intermediate_directory, 'bigram_sentences_all.txt')
-        self.trigram_model_filepath      = os.path.join(self.intermediate_directory, 'trigram_model_all')
-        self.trigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'trigram_sentences_all.txt')
-        self.trigram_reviews_filepath    = os.path.join(self.intermediate_directory, 'trigram_transformed_reviews_all.txt')
-
-    def data_file(self, file):
-        return os.path.join('..', 'data', self.subdir, file)
-
-paths = Paths('all_the_news') # punting on this -> TODO FIX IT!!!
+paths = Paths('all_the_news') # punting on this -> TODO make preprocessing a class!
 
 #################################################
 #
@@ -41,8 +26,47 @@ def preprocessing_pipeline(name='all_the_news'):
     trigram_model = get_trigram_model()
     write_trigram_sentences(trigram_model)
     write_trigram_reviews(nlp, bigram_model, trigram_model)
-
     # Now we can do LDA and other fancy shit!
+
+
+
+#################################################
+#
+#     Misc  / spaCy
+#
+#################################################
+
+
+def lemmatized_sentence_corpus(nlp_model, corpus_filename, batch_size=100, n_threads=6):
+    """
+    generator- uses spaCy to parse reviews, lemmatize the text, and yield sentences
+    """
+
+    for parsed_review in nlp_model.pipe(read_doc_by_line(corpus_filename),
+                                        batch_size=batch_size, n_threads=n_threads,
+                                        disable=['tagger', 'ner']):
+
+        for sent in parsed_review.sents:
+            yield ' '.join([token.lemma_ for token in sent if not punct_space(token)])
+
+
+def is_punct_space(token):
+    """
+    helper function to find tokens that are pure punctuation or whitespace
+    """
+    return token.is_punct or token.is_space
+
+
+def read_doc_by_line(filename):
+    """
+    generator to read in docs from the file and un-escape the original line breaks in the text
+    """
+
+    with codecs.open(filename, encoding='utf_8') as f:
+        for doc in f:
+            yield doc.replace('\\n', '\n')
+
+
 
 #################################################
 #
@@ -57,6 +81,7 @@ def write_unigram_sentences():
     print('segment sentences, write')
     unigram_sentence_itr = add_newline(lemmatized_sentence_corpus(nlp, paths.corpus_filepath))
     batch_write(paths.unigram_sentences_filepath, unigram_sentence_itr)
+
 
 
 #################################################
@@ -86,7 +111,8 @@ def write_bigram_sentences(bigram_model):
     print('Get unigram sentences..')
     unigram_sentences = LineSentence(paths.unigram_sentences_filepath)
     print('Join bi-gram\'s and write sentences to file...')
-    batch_write(paths.bigram_sentences_filepath, {u' '.join(bigram_model[s]) + '\n' for s in unigram_sentences})
+    batch_write(paths.bigram_sentences_filepath, (u' '.join(bigram_model[s]) + '\n' for s in unigram_sentences))
+
 
 
 #################################################
@@ -130,8 +156,13 @@ def write_trigram_sentences(trigram_model):
             trigram_sentence = u' '.join(trigram_model[bigram_sentence])
 
             f.write(trigram_sentence + '\n')
-        # TODO test: batch_write(trigram_sentences_filepath, {u' '.join(trigram_model[s]) + '\n' for s in bigram_sentences})
+        # TODO test: batch_write(trigram_sentences_filepath, (u' '.join(trigram_model[s]) + '\n' for s in bigram_sentences))
 
+# def get_trigram_sentences():
+#     if not os.path.isfile(paths.trigram_model_filepath):
+#         raise FileExistsError(paths.trigram_model_filepath)
+#
+#     return LineSentence(trigram_sentences_filepath)
 
 def write_trigram_reviews(nlp, bigram_model, trigram_model):
 

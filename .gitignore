@@ -2,7 +2,7 @@
 data/
 intermediate/
 tmp/
-
+.idea/
 ._*
 
 # Byte-compiled / optimized / DLL files
