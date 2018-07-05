@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block Title %}
+Contexter Results
+{% endblock %}
+
+{% block content %}
+
+Some things I might want to show:
+
+<header class="content-top">
+    <div class="title">Contexter Results</div>
+    <div class="help">What’s going on here? Click here for help</div>
+</header>
+<main>
+    <div class="floating-page">
+        <article>{{data.article|safe}}</article>
+    </div>
+</main>
+<aside class="details">
+    Click to show extra details on the article processing
+</aside>
+
+{% endblock %}
