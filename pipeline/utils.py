@@ -7,8 +7,9 @@ class Paths:
         self.subdir = subdir
 
         # preprocessing
-        self.data_directory              = os.path.join('data', self.subdir)
-        self.intermediate_directory      = os.path.join('intermediate', self.subdir)
+        base = 'pipeline'
+        self.data_directory              = os.path.join(base, 'data', self.subdir)
+        self.intermediate_directory      = os.path.join(base, 'intermediate', self.subdir)
         self.unigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'unigram_sentences_all.txt')
         self.corpus_filepath             = os.path.join(self.intermediate_directory, 'corpus_all.txt')
         self.bigram_model_filepath       = os.path.join(self.intermediate_directory, 'bigram_model_all') # bigram.model

@@ -1,7 +1,7 @@
 # from pipeline.preprocessing import preprocessing_pipeline
 from pipeline.lda import lda_pipeline
 
-
+# RUN FROM CONTEXTER BASE DIR
 lda_pipeline()
 
 # preprocessing_pipeline('all_the_news')
