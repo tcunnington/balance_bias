@@ -17,7 +17,7 @@ def lda_pipeline():
     print('Getting trigram dict...')
     trigram_dictionary = get_corpus_dict()
     print('Getting bow corpus...')
-    bow = get_trigram_bow_corpus(trigram_dictionaryl)
+    bow = get_trigram_bow_corpus(trigram_dictionary)
     print("Building LDA model...")
     lda = get_lda_model() # will just save for use later
     print('Building LDA viz model...')
