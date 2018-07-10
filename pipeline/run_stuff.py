@@ -1,4 +1,4 @@
-from pipeline.preprocessing import preprocessing_pipeline
+# from pipeline.preprocessing import preprocessing_pipeline
 from pipeline.lda import lda_pipeline
 
 

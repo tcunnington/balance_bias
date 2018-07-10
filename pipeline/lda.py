@@ -14,10 +14,15 @@ paths = Paths('all_the_news')
 
 
 def lda_pipeline():
+    print('Getting trigram dict...')
     trigram_dictionary = get_corpus_dict()
-    bow = get_trigram_bow_corpus(trigram_dictionary)
+    print('Getting bow corpus...')
+    bow = get_trigram_bow_corpus(trigram_dictionaryl)
+    print("Building LDA model...")
     lda = get_lda_model() # will just save for use later
+    print('Building LDA viz model...')
     get_ldaviz_model(lda, bow, trigram_dictionary) # will just save for use later
+    print('Done!')
 
 
 def get_corpus_dict(recalculate=False):
