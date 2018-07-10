@@ -82,7 +82,7 @@ def get_ldaviz_model(lda_model, trigram_bow_corpus, trigram_dictionary, recalcul
         LDAvis_prepared = pyLDAvis.gensim.prepare(lda_model, trigram_bow_corpus,
                                                   trigram_dictionary)
 
-        with open(paths.ldavis_data_filepath, 'w') as f:
+        with open(paths.ldavis_data_filepath, 'wb') as f:
             pickle.dump(LDAvis_prepared, f)
     else:
         with open(paths.ldavis_data_filepath) as f:
