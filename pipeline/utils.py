@@ -29,6 +29,9 @@ class Paths:
     def data_file(self, file):
         return os.path.join('..', 'data', self.subdir, file)
 
+    def get_lda_filepath(self, n_topics):
+        return os.path.join(self.intermediate_directory, 'lda.n' + str(int(n_topics)) + '.model')
+
 def batch_write(wfilename, iterator, batch_size=100):
     """
     Write files by the batch from an iterator. Created under the (possibly mistaken) belief that it's faster than
