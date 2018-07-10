@@ -4,14 +4,21 @@ from gensim.corpora import Dictionary, MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.word2vec import LineSentence
 
-# import pyLDAvis
-# import pyLDAvis.gensim
-# import warnings
-# import cPickle as pickle
+import pyLDAvis
+import pyLDAvis.gensim
+import pickle
 
 from pipeline.utils import Paths
 
 paths = Paths('all_the_news')
+
+
+def lda_pipeline():
+    trigram_dictionary = get_corpus_dict()
+    bow = get_trigram_bow_corpus(trigram_dictionary)
+    lda = get_lda_model() # will just save for use later
+    get_ldaviz_model(lda, bow, trigram_dictionary) # will just save for use later
+
 
 def get_corpus_dict(recalculate=False):
 
@@ -34,7 +41,7 @@ def get_corpus_dict(recalculate=False):
     return trigram_dictionary
 
 
-def get_mmcorpus(trigram_dictionary, recalculate=False):
+def get_trigram_bow_corpus(trigram_dictionary, recalculate=False):
 
     if not os.path.isfile(paths.trigram_bow_filepath) or recalculate:
         trigram_corpus = LineSentence(paths.trigram_reviews_filepath)
@@ -50,7 +57,7 @@ def get_lda_model(recalculate=False, n_topics=50, n_workers=6):
 
     if not os.path.isfile(paths.lda_model_filepath) or recalculate:
         trigram_dictionary = get_corpus_dict()
-        trigram_bow_corpus = get_mmcorpus(trigram_dictionary)
+        trigram_bow_corpus = get_trigram_bow_corpus(trigram_dictionary)
 
         lda = LdaMulticore(trigram_bow_corpus,
                            num_topics=n_topics,
@@ -62,3 +69,18 @@ def get_lda_model(recalculate=False, n_topics=50, n_workers=6):
         lda = LdaMulticore.load(paths.lda_model_filepath)
 
     return lda
+
+
+def get_ldaviz_model(lda_model, trigram_bow_corpus, trigram_dictionary, recalculate=False):
+
+    if not os.path.isfile(paths.ldavis_data_filepath) or recalculate:
+        LDAvis_prepared = pyLDAvis.gensim.prepare(lda_model, trigram_bow_corpus,
+                                                  trigram_dictionary)
+
+        with open(paths.ldavis_data_filepath, 'w') as f:
+            pickle.dump(LDAvis_prepared, f)
+    else:
+        with open(paths.ldavis_data_filepath) as f:
+            LDAvis_prepared = pickle.load(f)
+
+    return LDAvis_prepared

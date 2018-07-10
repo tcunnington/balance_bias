@@ -1,7 +1,10 @@
-from preprocessing import *
+from pipeline.preprocessing import preprocessing_pipeline
+from pipeline.lda import lda_pipeline
 
 
-preprocessing_pipeline('all_the_news')
+lda_pipeline()
+
+# preprocessing_pipeline('all_the_news')
 
 
 # print('Loading spaCy..')
