@@ -71,16 +71,6 @@ def prep_whitespace(text):
 #
 #################################################
 
-def lemmatized_sentence_corpus(nlp_model, corpus_filename, batch_size=100, n_threads=6):
-    """
-    generator- uses spaCy to parse reviews, lemmatize the text, and yield sentences
-    """
-
-    for parsed_review in nlp_model.pipe(read_doc_by_line(corpus_filename),
-                                        batch_size=batch_size, n_threads=n_threads,
-                                        disable=['tagger', 'ner']):
-        for sent in parsed_review.sents:
-            yield ' '.join(lemmatize_clean(sent))
 
 def is_punct_space(token):
     """

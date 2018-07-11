@@ -1,8 +1,10 @@
+import os
+print(os.getcwd())
+
 from pipeline.preprocessing import Preprocessor
 from pipeline.lda import lda_pipeline
 
 # NOTE: RUN FROM CONTEXTER BASE DIR!
-
 
 # Preprocessor uses whatever is in [source_name]/corpus_all.txt
 pp = Preprocessor('all_the_news', spacy_model='en_core_web_lg')

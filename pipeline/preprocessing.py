@@ -7,7 +7,7 @@ from gensim.parsing.preprocessing import STOPWORDS
 from pipeline.utils import *
 
 class Preprocessor():
-    def __init__(self, source_name, spacy_model='en'): # OR en_core_web_md OR en_core_web_lg
+    def __init__(self, source_name, spacy_model='en', preload_models=False): # OR en_core_web_md OR en_core_web_lg
         self.paths = Paths(source_name)
         print('load spacy model')
         if isinstance(spacy_model,str):
@@ -16,6 +16,16 @@ class Preprocessor():
             self.nlp = spacy_model
         else:
             raise ValueError('Invalid model')
+
+        if preload_models:
+            try:
+                self.bigram_model = self.get_bigram_model(from_scratch=False)
+                self.trigram_model = self.get_trigram_model(from_scratch=False)
+            except ValueError:
+                raise ValueError('Cannot preload models if they haven\'t already been generated')
+        else:
+            self.bigram_model = None
+            self.trigram_model = None
 
     #################################################
     #
@@ -45,7 +55,7 @@ class Preprocessor():
 
     def write_unigram_sentences(self):
         print('segment sentences, write')
-        unigram_sentence_itr = add_newline(lemmatized_sentence_corpus(self.nlp, self.paths.corpus_filepath))
+        unigram_sentence_itr = add_newline(self.lemmatized_sentence_corpus())
         batch_write(self.paths.unigram_sentences_filepath, unigram_sentence_itr)
 
 
@@ -57,9 +67,13 @@ class Preprocessor():
     #################################################
 
 
-    def get_bigram_model(self):
+    def get_bigram_model(self, from_scratch=True):
         print('Getting bi-gram model..')
         if not os.path.isfile(self.paths.bigram_model_filepath):
+
+            if not from_scratch:
+                raise ValueError('No bigram model file exists but from_scratch is False')
+
             print('Loading uni-gram sentences...')
             unigram_sentences = LineSentence(self.paths.unigram_sentences_filepath)
             print('Building bi-gram model...')
@@ -97,9 +111,13 @@ class Preprocessor():
     # bigram_sentences = bigram_model[unigram_sentences]
     # trigram_model = Phrases(bigram_sentences)
 
-    def get_trigram_model(self):
+    def get_trigram_model(self, from_scratch=True):
         print('Getting tri-gram model')
         if not os.path.isfile(self.paths.trigram_model_filepath):
+
+            if not from_scratch:
+                raise ValueError('No trigram model file exists but from_scratch is False')
+
             print('Loading bi-gram sentences...')
             bigram_sentences = LineSentence(self.paths.bigram_sentences_filepath)
             print('Building tri-gram model...')
@@ -150,8 +168,8 @@ class Preprocessor():
         """
         Processes a doc completely so it can be used with our trigram-trained LDA model
         """
-        bigram_model = self.get_bigram_model()
-        trigram_model = self.get_trigram_model()
+        bigram_model = self.bigram_model or self.get_bigram_model()
+        trigram_model = self.trigram_model or self.get_trigram_model()
         # Using spaCy to remove punctuation and lemmatize the text
         nlp = spacy.load('en')
         parsed = nlp(text)
@@ -162,3 +180,22 @@ class Preprocessor():
         trigram_doc = trigram_model[bigram_doc]
         # Removing stopwords
         return [term for term in trigram_doc if term not in STOPWORDS]
+
+    #################################################
+    #
+    #     Misc
+    #
+    #################################################
+
+    def lemmatized_sentence_corpus(self, batch_size=100, n_threads=6):
+        """
+        generator- uses spaCy to parse reviews, lemmatize the text, and yield sentences
+        """
+        corpus_filename = self.paths.corpus_filepath
+        for parsed_review in self.nlp.pipe(read_doc_by_line(corpus_filename),
+                                            batch_size=batch_size, n_threads=n_threads,
+                                            disable=['ner']):
+            for sent in parsed_review.sents:
+                line = ' '.join(lemmatize_clean(sent))
+                if line != '':
+                    yield line

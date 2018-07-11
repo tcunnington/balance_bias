@@ -86,3 +86,8 @@ def trigram_doc_to_bow(trigram_doc):
     return trigram_dictionary.doc2bow(trigram_doc)
 
 
+def choose_topics_subset(lda_output, topn=1):
+    """
+    Give a subset of topics from LDA output.
+    """
+    return [x[0] for x in lda_output[:topn]]
