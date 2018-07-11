@@ -68,9 +68,9 @@ class Preprocessor():
     #################################################
 
 
-    def get_bigram_model(self, from_scratch=True):
+    def get_bigram_model(self, recalculate=False, from_scratch=True):
         print('Getting bi-gram model..')
-        if not os.path.isfile(self.paths.bigram_model_filepath):
+        if not os.path.isfile(self.paths.bigram_model_filepath) or recalculate:
 
             if not from_scratch:
                 raise ValueError('No bigram model file exists but from_scratch is False')
@@ -112,9 +112,9 @@ class Preprocessor():
     # bigram_sentences = bigram_model[unigram_sentences]
     # trigram_model = Phrases(bigram_sentences)
 
-    def get_trigram_model(self, from_scratch=True):
+    def get_trigram_model(self, recalculate=False, from_scratch=True):
         print('Getting tri-gram model')
-        if not os.path.isfile(self.paths.trigram_model_filepath):
+        if not os.path.isfile(self.paths.trigram_model_filepath) or recalculate:
 
             if not from_scratch:
                 raise ValueError('No trigram model file exists but from_scratch is False')
