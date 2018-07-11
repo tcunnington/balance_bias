@@ -9,6 +9,9 @@ from flask import Flask, render_template, request, redirect
 # from bokeh.embed import components
 # from bokeh.palettes import Category10 as palette
 
+from pipeline.preprocessing import Preprocessor
+from pipeline.lda import trigram_doc_to_bow, get_lda_model
+
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
@@ -24,7 +27,8 @@ app = Flask(__name__)
 
 import spacy
 nlp = spacy.load('en')
-
+preprocessor = Preprocessor('all_the_news', nlp)
+lda = get_lda_model()
 
 @app.route('/')
 def index():
@@ -39,8 +43,11 @@ def context():
     article = request.form.get('article')
     # features = request.form.getlist('features')
 
-    doc = nlp(article)
-    raw_html = spacy.displacy.render(doc, style='ent')
+    raw_html = spacy.displacy.render(nlp(article), style='ent')
+
+    parsed_doc = preprocessor.process_doc(article)
+    bow = trigram_doc_to_bow(parsed_doc)
+
 
     render_data = {
         'article':raw_html

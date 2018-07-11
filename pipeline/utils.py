@@ -17,6 +17,8 @@ class Paths:
         self.trigram_model_filepath      = os.path.join(self.intermediate_directory, 'trigram_model_all') # trigram.model
         self.trigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'trigram_sentences_all.txt')
         self.trigram_reviews_filepath    = os.path.join(self.intermediate_directory, 'trigram_transformed_reviews_all.txt')
+        # TODO use this instead of the above
+        self.trigram_corpus_filepath = os.path.join(self.intermediate_directory, 'trigram_transformed_corpus_all.txt')
 
         # models
         self.trigram_dictionary_filepath = os.path.join(self.intermediate_directory, 'trigram_dict_all.dict')#'trigram.dict')
@@ -60,5 +62,43 @@ def add_newline(itr):
         yield item + '\n'
 
 def prep_whitespace(text):
-    return re.sub('\s+', ' ', text)
+    return re.sub(r'\s+', ' ', text)
 
+
+#################################################
+#
+#     Misc  / spaCy
+#
+#################################################
+
+def lemmatized_sentence_corpus(nlp_model, corpus_filename, batch_size=100, n_threads=6):
+    """
+    generator- uses spaCy to parse reviews, lemmatize the text, and yield sentences
+    """
+
+    for parsed_review in nlp_model.pipe(read_doc_by_line(corpus_filename),
+                                        batch_size=batch_size, n_threads=n_threads,
+                                        disable=['tagger', 'ner']):
+        for sent in parsed_review.sents:
+            yield ' '.join(lemmatize_clean(sent))
+
+def is_punct_space(token):
+    """
+    helper function to find tokens that are pure punctuation or whitespace
+    """
+    return token.is_punct or token.is_space
+
+def read_doc_by_line(filename):
+    """
+    generator to read in docs from the file and un-escape the original line breaks in the text
+    """
+
+    with codecs.open(filename, encoding='utf_8') as f:
+        for doc in f:
+            yield doc.replace('\\n', '\n')
+
+def lemmatize_clean(spacy_itr):
+    """
+    generator to act on a spaCy object that allows iterating over tokens
+    """
+    return (token.lemma_ for token in spacy_itr if not is_punct_space(token))

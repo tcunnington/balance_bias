@@ -1,18 +1,13 @@
-# from pipeline.preprocessing import preprocessing_pipeline
+from pipeline.preprocessing import Preprocessor
 from pipeline.lda import lda_pipeline
 
-# RUN FROM CONTEXTER BASE DIR
-lda_pipeline()
-
-# preprocessing_pipeline('all_the_news')
+# NOTE: RUN FROM CONTEXTER BASE DIR!
 
 
-# print('Loading spaCy..')
-# nlp = spacy.load('en')
-# bigram_model = get_bigram_model()
-# trigram_model = get_trigram_model()
-# # print('Writing tri-gram sentences..')
-# # write_trigram_sentences(trigram_model)
-# print('Writing tri-gram reviews..')
-# write_trigram_reviews(nlp, bigram_model, trigram_model)
-# print('Done done!')
+
+# Preprocessor uses whatever is in [source_name]/corpus_all.txt
+# pp = Preprocessor('all_the_news', spacy_model='en_core_web_lg')
+# pp.run_pipeline()
+
+# LDA model uses trigram corpus by default
+# lda_pipeline()
