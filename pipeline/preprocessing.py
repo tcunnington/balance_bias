@@ -39,9 +39,9 @@ class Preprocessor():
     def run_pipeline(self):
         # starting with a doc per line written "corpus_all.txt"
         self.write_unigram_sentences()
-        bigram_model = self.get_bigram_model()
+        bigram_model = self.get_bigram_model(recalculate=True)
         self.write_bigram_sentences(bigram_model)
-        trigram_model = self.get_trigram_model()
+        trigram_model = self.get_trigram_model(recalculate=True)
         self.write_trigram_sentences(trigram_model)
         self.write_trigram_corpus(bigram_model, trigram_model)
         # Now we can do LDA and other fancy shit!
@@ -69,19 +69,19 @@ class Preprocessor():
 
 
     def get_bigram_model(self, recalculate=False, from_scratch=True):
-        print('Getting bi-gram model..')
+
         if not os.path.isfile(self.paths.bigram_model_filepath) or recalculate:
 
             if not from_scratch:
                 raise ValueError('No bigram model file exists but from_scratch is False')
 
-            print('Loading uni-gram sentences...')
-            unigram_sentences = LineSentence(self.paths.unigram_sentences_filepath)
             print('Building bi-gram model...')
+            unigram_sentences = LineSentence(self.paths.unigram_sentences_filepath)
             bigram_model = Phrases(unigram_sentences)  # TODO look into supplying common words to avoid for better phrases
             print('Writing model...')
             bigram_model.save(self.paths.bigram_model_filepath)
         else:
+            print('Loading bi-gram model...')
             bigram_model = Phrases.load(self.paths.bigram_model_filepath)
 
         print('Done!')
@@ -113,19 +113,19 @@ class Preprocessor():
     # trigram_model = Phrases(bigram_sentences)
 
     def get_trigram_model(self, recalculate=False, from_scratch=True):
-        print('Getting tri-gram model')
+
         if not os.path.isfile(self.paths.trigram_model_filepath) or recalculate:
 
             if not from_scratch:
                 raise ValueError('No trigram model file exists but from_scratch is False')
 
-            print('Loading bi-gram sentences...')
-            bigram_sentences = LineSentence(self.paths.bigram_sentences_filepath)
             print('Building tri-gram model...')
+            bigram_sentences = LineSentence(self.paths.bigram_sentences_filepath)
             trigram_model = Phrases(bigram_sentences)
             print('Writing model...')
             trigram_model.save(self.paths.trigram_model_filepath)
         else:
+            print('Loading bi-gram model...')
             trigram_model = Phrases.load(self.paths.trigram_model_filepath)
 
         print('Done!')
@@ -144,12 +144,11 @@ class Preprocessor():
         #         f.write(trigram_sentence + '\n')
 
 
-    def write_trigram_corpus(self, bigram_model, trigram_model):
+    def write_trigram_corpus(self, bigram_model, trigram_model, batch_size=100, n_threads=6):
 
         with codecs.open(self.paths.trigram_corpus_filepath, 'w', encoding='utf_8') as f:
 
-            for parsed_doc in self.nlp.pipe(read_doc_by_line(self.paths.corpus_filepath),
-                                          batch_size=100, n_threads=4, disable=['tagger', 'ner']):
+            for parsed_doc in self.parse_corpus_by_line():
                 # lemmatize the text, removing punctuation and whitespace
                 unigram_doc = lemmatize_clean(parsed_doc)
 
@@ -164,6 +163,7 @@ class Preprocessor():
                 # write the transformed doc as a line in the new file
                 trigram_doc = u' '.join(trigram_doc)
                 f.write(trigram_doc + '\n')
+
 
     def process_doc(self, text):
         """
@@ -188,15 +188,20 @@ class Preprocessor():
     #
     #################################################
 
-    def lemmatized_sentence_corpus(self, batch_size=100, n_threads=6):
+    def lemmatized_sentence_corpus(self, ):
         """
         generator- uses spaCy to parse reviews, lemmatize the text, and yield sentences
         """
-        corpus_filename = self.paths.corpus_filepath
-        for parsed_review in self.nlp.pipe(read_doc_by_line(corpus_filename),
-                                            batch_size=batch_size, n_threads=n_threads,
-                                            disable=['ner']):
+        corpus_filepath = self.paths.corpus_filepath
+        for parsed_review in self.parse_corpus_by_line():
             for sent in parsed_review.sents:
                 line = ' '.join(lemmatize_clean(sent))
                 if line != '':
                     yield line
+
+    def parse_corpus_by_line(self, batch_size=100, n_threads=6, disable=['ner'], **kwargs):
+
+        corpus_filepath = self.paths.corpus_filepath
+        return self.nlp.pipe(read_doc_by_line(corpus_filepath),
+                      batch_size=batch_size, n_threads=n_threads,
+                      disable=disable, **kwargs)
