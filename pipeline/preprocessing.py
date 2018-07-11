@@ -134,7 +134,7 @@ class Preprocessor():
 
     def write_trigram_sentences(self, trigram_model):
         bigram_sentences = LineSentence(self.paths.bigram_sentences_filepath)
-        batch_write(trigram_sentences_filepath, (u' '.join(trigram_model[s]) + '\n' for s in bigram_sentences))
+        batch_write(self.paths.trigram_sentences_filepath, (u' '.join(trigram_model[s]) + '\n' for s in bigram_sentences))
 
         # with codecs.open(self.paths.trigram_sentences_filepath, 'w', encoding='utf_8') as f:
         #
@@ -146,7 +146,7 @@ class Preprocessor():
 
     def write_trigram_corpus(self, bigram_model, trigram_model):
 
-        with codecs.open(self.paths.trigram_reviews_filepath, 'w', encoding='utf_8') as f:
+        with codecs.open(self.paths.trigram_corpus_filepath, 'w', encoding='utf_8') as f:
 
             for parsed_doc in self.nlp.pipe(read_doc_by_line(self.paths.corpus_filepath),
                                           batch_size=100, n_threads=4, disable=['tagger', 'ner']):
