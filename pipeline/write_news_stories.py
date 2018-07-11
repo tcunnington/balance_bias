@@ -1,6 +1,6 @@
 import pandas as pd
 from pipeline.utils import *
-from pipeline.preprocessing import Paths
+from pipeline.paths import Paths
 import spacy
 
 import os

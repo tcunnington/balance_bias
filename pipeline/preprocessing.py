@@ -4,6 +4,7 @@ from gensim.models import Phrases
 from gensim.models.word2vec import LineSentence
 from gensim.parsing.preprocessing import STOPWORDS
 
+from pipeline.path import Paths
 from pipeline.utils import *
 
 class Preprocessor():

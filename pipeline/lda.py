@@ -1,11 +1,10 @@
 import os
 
-import spacy
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.word2vec import LineSentence
 
-from pipeline.utils import *
+from pipeline.paths import Paths
 
 paths = Paths('all_the_news')
 
@@ -20,9 +19,13 @@ def lda_pipeline(n_topics=50):
     print('Done!')
 
 
-def get_corpus_dict(recalculate=False):
+def get_corpus_dict(recalculate=False,  from_scratch=True):
 
     if not os.path.isfile(paths.trigram_dictionary_filepath) or recalculate:
+
+        if not from_scratch:
+            raise ValueError('No corpus Dictionary file exists but from_scratch is False')
+
         trigram_reviews = LineSentence(paths.trigram_reviews_filepath)
 
         # learn the dictionary by iterating over all of the reviews
@@ -41,9 +44,13 @@ def get_corpus_dict(recalculate=False):
     return trigram_dictionary
 
 
-def get_trigram_bow_corpus(trigram_dictionary, recalculate=False):
+def get_trigram_bow_corpus(trigram_dictionary, recalculate=False, from_scratch=True):
 
     if not os.path.isfile(paths.trigram_bow_filepath) or recalculate:
+
+        if not from_scratch:
+            raise ValueError('No BOW corpus file exists but from_scratch is False')
+
         trigram_corpus = LineSentence(paths.trigram_reviews_filepath)
         # generate bag-of-words representation
         trigram_bow_generator = (trigram_dictionary.doc2bow(doc) for doc in trigram_corpus)

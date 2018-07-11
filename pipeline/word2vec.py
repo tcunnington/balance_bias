@@ -2,7 +2,7 @@ import os
 from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
 
-from pipeline.utils import *
+from pipeline.paths import Paths
 
 paths = Paths('all_the_news')
 

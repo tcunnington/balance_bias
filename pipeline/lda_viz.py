@@ -5,7 +5,7 @@ import pyLDAvis
 import pyLDAvis.gensim
 
 from pipeline.lda import *
-from pipeline.utils import Paths
+from pipeline.paths import Paths
 
 """
 NOTE this stuff is in a separate file because loading pyLDAvis causes notebook cells to show deprecation 
