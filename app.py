@@ -10,7 +10,7 @@ from flask import Flask, render_template, request, redirect
 # from bokeh.palettes import Category10 as palette
 
 from pipeline.preprocessing import Preprocessor
-from pipeline.lda import trigram_doc_to_bow, get_lda_model, choose_topics_subset
+from pipeline.lda import LDABuilder
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -27,8 +27,11 @@ app = Flask(__name__)
 
 import spacy
 nlp = spacy.load('en')
-preprocessor = Preprocessor('all_the_news', nlp,  preload_models=True)
-lda = get_lda_model()
+source = 'all_the_news'
+prep = Preprocessor(source, nlp, preload_models=True)
+
+lda_builder = LDABuilder(source)
+lda = lda_builder.get_lda_model()
 
 @app.route('/')
 def index():
@@ -45,9 +48,9 @@ def context():
 
     raw_html = spacy.displacy.render(nlp(article), style='ent')
 
-    parsed_doc = preprocessor.process_doc(article)
-    bow = trigram_doc_to_bow(parsed_doc)
-    topic_ids = choose_topics_subset(lda[bow])
+    parsed_doc = prep.process_doc(article)
+    bow = lda_builder.trigram_doc_to_bow(parsed_doc)
+    topic_ids = lda_builder.choose_topics_subset(lda[bow])
 
     render_data = {
         'article':raw_html,

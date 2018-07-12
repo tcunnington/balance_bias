@@ -8,6 +8,10 @@ from pipeline.paths import Paths
 from pipeline.utils import *
 
 class Preprocessor():
+    """
+    Handles document parsing, lemmatization, and phrase modelling
+    """
+
     def __init__(self, source_name, spacy_model='en', preload_models=False): # OR en_core_web_md OR en_core_web_lg
         self.paths = Paths(source_name)
         print('load spacy model')
@@ -35,7 +39,6 @@ class Preprocessor():
     #################################################
 
 
-
     def run_pipeline(self):
         # starting with a doc per line written "corpus_all.txt"
         self.write_unigram_sentences()
@@ -44,7 +47,6 @@ class Preprocessor():
         trigram_model = self.get_trigram_model(recalculate=True)
         self.write_trigram_sentences(trigram_model)
         self.write_trigram_corpus(bigram_model, trigram_model)
-        # Now we can do LDA and other fancy shit!
 
 
 
