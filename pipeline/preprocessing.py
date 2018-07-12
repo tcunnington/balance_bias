@@ -47,6 +47,7 @@ class Preprocessor():
         trigram_model = self.get_trigram_model(recalculate=True)
         self.write_trigram_sentences(trigram_model)
         self.write_trigram_corpus(bigram_model, trigram_model)
+        print('Preprocessing and phrase modeling done!')
 
 
 

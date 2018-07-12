@@ -4,33 +4,38 @@ import pickle
 import pyLDAvis
 import pyLDAvis.gensim
 
-from pipeline.lda import *
-from pipeline.paths import Paths
+from pipeline.lda import LDABuilder
 
 """
 NOTE this stuff is in a separate file because loading pyLDAvis causes notebook cells to show deprecation 
 errors after all runs--super annoying
 """
 
-paths = Paths('all_the_news')
+class LDAViz:
 
-def viz_pipeline(html_filename):
-    trigram_dictionary = get_corpus_dict()
-    bow = get_trigram_bow_corpus(trigram_dictionary)
-    lda = get_lda_model() # will just save for use later
-    get_ldaviz_model(lda, bow, trigram_dictionary) # will just save for use later
-    print('Creating HTML at ' + html_filename)
+    def __init__(self, lda_builder: LDABuilder):
+        self.lda_builder = lda_builder
+        self.paths = lda_builder.paths
 
-def get_ldaviz_model(lda_model, trigram_bow_corpus, trigram_dictionary, recalculate=False):
+    def viz_pipeline(self, html_filename='lda_viz.html'):
+        trigram_dictionary = self.lda_builder.get_corpus_dict(from_scratch=False)
+        bow = self.lda_builder.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
+        lda = self.lda_builder.get_lda_model(from_scratch=False)
+        ldaviz_prepared = self.get_ldaviz_model(lda, bow, trigram_dictionary, recalculate=True)
+        out_path = self.paths.output_file(html_filename)
+        pyLDAvis.save_html(ldaviz_prepared, out_path)
+        print('Creating HTML at ' + out_path)
 
-    if not os.path.isfile(paths.ldavis_data_filepath) or recalculate:
-        LDAvis_prepared = pyLDAvis.gensim.prepare(lda_model, trigram_bow_corpus,
-                                                  trigram_dictionary)
+    def get_ldaviz_model(self, lda_model, trigram_bow_corpus, trigram_dictionary, recalculate=False):
 
-        with open(paths.ldavis_data_filepath, 'wb') as f:
-            pickle.dump(LDAvis_prepared, f)
-    else:
-        with open(paths.ldavis_data_filepath, 'rb') as f:
-            LDAvis_prepared = pickle.load(f)
+        if not os.path.isfile(self.paths.ldavis_data_filepath) or recalculate:
+            LDAvis_prepared = pyLDAvis.gensim.prepare(lda_model, trigram_bow_corpus,
+                                                      trigram_dictionary)
 
-    return LDAvis_prepared
+            with open(self.paths.ldavis_data_filepath, 'wb') as f:
+                pickle.dump(LDAvis_prepared, f)
+        else:
+            with open(self.paths.ldavis_data_filepath, 'rb') as f:
+                LDAvis_prepared = pickle.load(f)
+
+        return LDAvis_prepared

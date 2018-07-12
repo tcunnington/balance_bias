@@ -14,9 +14,7 @@ class LDABuilder:
 
     def lda_pipeline(self, n_topics=50):
         trigram_dictionary = self.get_corpus_dict(recalculate=True)
-
         self.get_trigram_bow_corpus(trigram_dictionary, recalculate=True)
-
         self.get_lda_model(n_topics, recalculate=True)
         print('Done Done!')
 
@@ -77,10 +75,10 @@ class LDABuilder:
             if not from_scratch:
                 raise ValueError('No LDA file exists but from_scratch is False')
 
-            print('Building LDA model...')
             trigram_dictionary = self.get_corpus_dict()
             trigram_bow_corpus = self.get_trigram_bow_corpus(trigram_dictionary)
 
+            print('Building LDA model...')
             lda = LdaMulticore(trigram_bow_corpus,
                                num_topics=n_topics,
                                id2word=trigram_dictionary,
@@ -95,10 +93,10 @@ class LDABuilder:
         return lda
 
 
-    def trigram_doc_to_bow(self, trigram_doc):
+    def trigram_doc_to_bow(self, parseed_doc):
         # Creating a bag-of-words representation
         trigram_dictionary = self.get_corpus_dict()
-        return trigram_dictionary.doc2bow(trigram_doc)
+        return trigram_dictionary.doc2bow(parseed_doc)
 
 
     def choose_topics_subset(self, lda_output, topn=1):
