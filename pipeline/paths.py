@@ -6,9 +6,9 @@ class Paths:
         self.subdir = subdir
 
         # preprocessing
-        base = 'pipeline'
-        self.data_directory              = os.path.join(base, 'data', self.subdir)
-        self.intermediate_directory      = os.path.join(base, 'intermediate', self.subdir)
+        self.base = 'pipeline'
+        self.data_directory              = os.path.join(self.base, 'data', self.subdir)
+        self.intermediate_directory      = os.path.join(self.base, 'intermediate', self.subdir)
         self.unigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'unigram_sentences_all.txt')
         self.corpus_filepath             = os.path.join(self.intermediate_directory, 'corpus_all.txt')
         self.bigram_model_filepath       = os.path.join(self.intermediate_directory, 'bigram_model_all') # bigram.model
@@ -27,7 +27,7 @@ class Paths:
         self.word2vec_filepath           = os.path.join(self.intermediate_directory, 'word2vec_model_all')
 
     def data_file(self, file):
-        return os.path.join('..', 'data', self.subdir, file)
+        return os.path.join(self.data_directory, file)
 
     def get_lda_filepath(self, n_topics):
         return os.path.join(self.intermediate_directory, 'lda.n' + str(int(n_topics)) + '.model')
