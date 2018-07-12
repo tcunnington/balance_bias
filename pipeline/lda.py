@@ -10,7 +10,7 @@ paths = Paths('all_the_news')
 
 
 def lda_pipeline(n_topics=50):
-    print('Getting trigram dict...')
+    print('Getting trigram dict...') # TODO move prints to inside methods
     trigram_dictionary = get_corpus_dict(recalculate=True)
     print('Getting bow corpus...')
     get_trigram_bow_corpus(trigram_dictionary, recalculate=True)
@@ -26,10 +26,10 @@ def get_corpus_dict(recalculate=False,  from_scratch=True):
         if not from_scratch:
             raise ValueError('No corpus Dictionary file exists but from_scratch is False')
 
-        trigram_reviews = LineSentence(paths.trigram_reviews_filepath)
+        trigram_docs = LineSentence(paths.trigram_corpus_filepath)
 
-        # learn the dictionary by iterating over all of the reviews
-        trigram_dictionary = Dictionary(trigram_reviews)
+        # learn the dictionary by iterating over all of the docs
+        trigram_dictionary = Dictionary(trigram_docs)
 
         # filter tokens that are very rare or too common from
         # the dictionary (filter_extremes) and reassign integer ids (compactify)
@@ -51,7 +51,7 @@ def get_trigram_bow_corpus(trigram_dictionary, recalculate=False, from_scratch=T
         if not from_scratch:
             raise ValueError('No BOW corpus file exists but from_scratch is False')
 
-        trigram_corpus = LineSentence(paths.trigram_reviews_filepath)
+        trigram_corpus = LineSentence(paths.trigram_corpus_filepath)
         # generate bag-of-words representation
         trigram_bow_generator = (trigram_dictionary.doc2bow(doc) for doc in trigram_corpus)
         MmCorpus.serialize(paths.trigram_bow_filepath, trigram_bow_generator)

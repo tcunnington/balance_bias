@@ -192,11 +192,11 @@ class Preprocessor():
 
     def lemmatized_sentence_corpus(self, ):
         """
-        generator- uses spaCy to parse reviews, lemmatize the text, and yield sentences
+        generator- uses spaCy to parse docs, lemmatize the text, and yield sentences
         """
         corpus_filepath = self.paths.corpus_filepath
-        for parsed_review in self.parse_corpus_by_line():
-            for sent in parsed_review.sents:
+        for parsed_doc in self.parse_corpus_by_line():
+            for sent in parsed_doc.sents:
                 line = ' '.join(lemmatize_clean(sent))
                 if line != '':
                     yield line
