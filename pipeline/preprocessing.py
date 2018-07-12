@@ -1,6 +1,6 @@
 import spacy
 import os
-from gensim.models import Phrases
+from gensim.models.phrases import Phrases, Phraser
 from gensim.models.word2vec import LineSentence
 from gensim.parsing.preprocessing import STOPWORDS
 
@@ -78,6 +78,7 @@ class Preprocessor():
             print('Building bi-gram model...')
             unigram_sentences = LineSentence(self.paths.unigram_sentences_filepath)
             bigram_model = Phrases(unigram_sentences)  # TODO look into supplying common words to avoid for better phrases
+            bigram_model = Phraser(bigram_model)
             print('Writing model...')
             bigram_model.save(self.paths.bigram_model_filepath)
         else:
@@ -122,10 +123,11 @@ class Preprocessor():
             print('Building tri-gram model...')
             bigram_sentences = LineSentence(self.paths.bigram_sentences_filepath)
             trigram_model = Phrases(bigram_sentences)
+            trigram_model = Phraser(trigram_model)
             print('Writing model...')
             trigram_model.save(self.paths.trigram_model_filepath)
         else:
-            print('Loading bi-gram model...')
+            print('Loading tri-gram model...')
             trigram_model = Phrases.load(self.paths.trigram_model_filepath)
 
         print('Done!')

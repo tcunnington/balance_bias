@@ -11,11 +11,11 @@ paths = Paths('all_the_news')
 
 def lda_pipeline(n_topics=50):
     print('Getting trigram dict...')
-    trigram_dictionary = get_corpus_dict()
+    trigram_dictionary = get_corpus_dict(recalculate=True)
     print('Getting bow corpus...')
-    get_trigram_bow_corpus(trigram_dictionary)
+    get_trigram_bow_corpus(trigram_dictionary, recalculate=True)
     print("Building LDA model...")
-    get_lda_model(n_topics) # will just save for use later
+    get_lda_model(n_topics, recalculate=True)
     print('Done!')
 
 
