@@ -3,22 +3,20 @@ print(os.getcwd())
 
 from pipeline.preprocessing import Preprocessor
 from pipeline.lda import LDABuilder
+from pipeline.lda_viz import LDAViz
 
 # NOTE: RUN FROM CONTEXTER BASE DIR!
 source_name = 'all_the_news'
 
 # Preprocessor uses whatever is in [source_name]/corpus_all.txt
-pp = Preprocessor(source_name, spacy_model='en_core_web_lg')
-pp.run_pipeline()
+# pp = Preprocessor(source_name, spacy_model='en_core_web_lg')
+# pp.run_pipeline()
 
 # LDA model uses trigram corpus by default
+n_topics = 75
 ldab = LDABuilder(source_name)
-ldab.lda_pipeline()
+ldab.get_lda_model(n_topics=n_topics, recalculate=True)
+# ldab.lda_pipeline()
 
-# from gensim.models.phrases import Phrases, Phraser
-
-# bigram_model = Phrases.load(pp.paths.bigram_model_filepath)
-# Phraser(bigram_model).save(pp.paths.bigram_model_filepath)
-
-# trigram_model = Phrases.load(pp.paths.trigram_model_filepath)
-# Phraser(trigram_model).save(pp.paths.trigram_model_filepath)
+lda_viz = LDAViz(ldab)
+lda_viz.viz_pipeline(n_topics, 'ldaviz_{}.html'.format(n_topics))
