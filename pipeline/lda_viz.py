@@ -28,7 +28,7 @@ class LDAViz:
 
     def get_ldaviz_model(self, lda_model, trigram_bow_corpus, trigram_dictionary, recalculate=False):
 
-        if not os.path.isfile(self.paths.ldavis_data_filepath) or recalculate:
+        if not os.path.isfile(self.paths.get_ldaviz_filepath(lda_model.num_topics)) or recalculate:
             LDAvis_prepared = pyLDAvis.gensim.prepare(lda_model, trigram_bow_corpus,
                                                       trigram_dictionary)
 

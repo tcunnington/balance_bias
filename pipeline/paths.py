@@ -24,7 +24,7 @@ class Paths:
         self.trigram_bow_filepath        = os.path.join(self.intermediate_directory, 'trigram_bow_corpus_all.mm')
         self.lda_model_filepath          = os.path.join(self.intermediate_directory, 'lda.model')
         # self.topic_names_filepath = os.path.join(intermediate_directory, 'topic_names.pkl')
-        self.ldavis_data_filepath        = os.path.join(self.intermediate_directory, 'ldavis_prepared.model')
+        # self.ldavis_data_filepath        = os.path.join(self.intermediate_directory, 'ldavis_prepared.model')
         self.word2vec_filepath           = os.path.join(self.intermediate_directory, 'word2vec_model_all')
 
     def data_file(self, file):
@@ -32,6 +32,9 @@ class Paths:
 
     def get_lda_filepath(self, n_topics):
         return os.path.join(self.intermediate_directory, 'lda.n' + str(int(n_topics)) + '.model')
+
+    def get_ldaviz_filepath(self, n_topics):
+        return os.path.join(self.intermediate_directory, 'ldaviz.n' + str(int(n_topics)) + '.model')
 
     def output_file(self, file):
         return os.path.join(self.output_directory, file)
