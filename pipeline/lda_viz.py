@@ -28,14 +28,18 @@ class LDAViz:
 
     def get_ldaviz_model(self, lda_model, trigram_bow_corpus, trigram_dictionary, recalculate=False):
 
-        if not os.path.isfile(self.paths.get_ldaviz_filepath(lda_model.num_topics)) or recalculate:
+        filepath = self.paths.get_ldaviz_filepath(lda_model.num_topics)
+        if not os.path.isfile(filepath) or recalculate:
+            print('Building LDA Viz model...')
             LDAvis_prepared = pyLDAvis.gensim.prepare(lda_model, trigram_bow_corpus,
                                                       trigram_dictionary)
 
-            with open(self.paths.ldavis_data_filepath, 'wb') as f:
+            with open(filepath, 'wb') as f:
                 pickle.dump(LDAvis_prepared, f)
+            print('Pickled at ' + filepath)
         else:
-            with open(self.paths.ldavis_data_filepath, 'rb') as f:
+            print('Loading LDA Viz model...')
+            with open(filepath, 'rb') as f:
                 LDAvis_prepared = pickle.load(f)
 
         return LDAvis_prepared

@@ -141,13 +141,6 @@ class Preprocessor():
         bigram_sentences = LineSentence(self.paths.bigram_sentences_filepath)
         batch_write(self.paths.trigram_sentences_filepath, (u' '.join(trigram_model[s]) + '\n' for s in bigram_sentences))
 
-        # with codecs.open(self.paths.trigram_sentences_filepath, 'w', encoding='utf_8') as f:
-        #
-        #     for bigram_sentence in bigram_sentences:
-        #         trigram_sentence = u' '.join(trigram_model[bigram_sentence])
-        #
-        #         f.write(trigram_sentence + '\n')
-
 
     def write_trigram_corpus(self, bigram_model, trigram_model, batch_size=100, n_threads=6):
 
