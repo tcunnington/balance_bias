@@ -16,11 +16,16 @@ class Preprocessor():
         self.paths = Paths(source_name)
         print('load spacy model')
         if isinstance(spacy_model,str):
-            self.nlp = spacy.load(spacy_model)
+            nlp = spacy.load(spacy_model, disable=['ner', 'parser'])
         elif isinstance(spacy_model, spacy.lang.en.English):
-            self.nlp = spacy_model
+            nlp = spacy_model.disable_pipes('ner', 'parser')
         else:
             raise ValueError('Invalid model')
+
+        # add sentence segmentation since we removed the parser
+        # note: this is a different segmentation, but doesn't seem to be problematic
+        nlp.add_pipe(nlp.create_pipe('sentencizer'))
+        self.nlp = nlp
 
         if preload_models:
             try:
@@ -171,7 +176,7 @@ class Preprocessor():
         bigram_model = self.bigram_model or self.get_bigram_model()
         trigram_model = self.trigram_model or self.get_trigram_model()
         # Using spaCy to remove punctuation and lemmatize the text
-        parsed = self.nlp(text, disable=['parser','ner','textcat'])
+        parsed = self.nlp(text)
         unigram_doc = lemmatize_clean(parsed)
         # Applying our first-order phrase model to join word pairs
         bigram_doc = bigram_model[unigram_doc]
@@ -196,7 +201,7 @@ class Preprocessor():
                 if line != '':
                     yield line
 
-    def parse_corpus_by_line(self, batch_size=100, n_threads=6, disable=['parser','ner','textcat'], **kwargs):
+    def parse_corpus_by_line(self, batch_size=100, n_threads=6, **kwargs):
 
         corpus_filepath = self.paths.corpus_filepath
         return self.nlp.pipe(read_doc_by_line(corpus_filepath),
