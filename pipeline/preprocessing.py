@@ -40,6 +40,7 @@ class Preprocessor():
 
 
     def run_pipeline(self):
+        print('Running preprocessing pipeline (source: {})'.format(self.paths.subdir))
         # starting with a doc per line written "corpus_all.txt"
         self.write_unigram_sentences()
         bigram_model = self.get_bigram_model(recalculate=True)
@@ -142,7 +143,7 @@ class Preprocessor():
         batch_write(self.paths.trigram_sentences_filepath, (u' '.join(trigram_model[s]) + '\n' for s in bigram_sentences))
 
 
-    def write_trigram_corpus(self, bigram_model, trigram_model, batch_size=100, n_threads=6):
+    def write_trigram_corpus(self, bigram_model, trigram_model):
 
         with codecs.open(self.paths.trigram_corpus_filepath, 'w', encoding='utf_8') as f:
 
@@ -170,8 +171,7 @@ class Preprocessor():
         bigram_model = self.bigram_model or self.get_bigram_model()
         trigram_model = self.trigram_model or self.get_trigram_model()
         # Using spaCy to remove punctuation and lemmatize the text
-        nlp = spacy.load('en')
-        parsed = nlp(text)
+        parsed = self.nlp(text, disable=['parser','ner','textcat'])
         unigram_doc = lemmatize_clean(parsed)
         # Applying our first-order phrase model to join word pairs
         bigram_doc = bigram_model[unigram_doc]
@@ -186,18 +186,17 @@ class Preprocessor():
     #
     #################################################
 
-    def lemmatized_sentence_corpus(self, ):
+    def lemmatized_sentence_corpus(self):
         """
         generator- uses spaCy to parse docs, lemmatize the text, and yield sentences
         """
-        corpus_filepath = self.paths.corpus_filepath
         for parsed_doc in self.parse_corpus_by_line():
             for sent in parsed_doc.sents:
                 line = ' '.join(lemmatize_clean(sent))
                 if line != '':
                     yield line
 
-    def parse_corpus_by_line(self, batch_size=100, n_threads=6, disable=['ner'], **kwargs):
+    def parse_corpus_by_line(self, batch_size=100, n_threads=6, disable=['parser','ner','textcat'], **kwargs):
 
         corpus_filepath = self.paths.corpus_filepath
         return self.nlp.pipe(read_doc_by_line(corpus_filepath),

@@ -13,6 +13,7 @@ class LDABuilder:
         self.paths = Paths(source_name)
 
     def lda_pipeline(self, n_topics=50):
+        print('Running LDA pipeline (source: {})'.format(self.paths.subdir))
         trigram_dictionary = self.get_corpus_dict(recalculate=True)
         self.get_trigram_bow_corpus(trigram_dictionary, recalculate=True)
         self.get_lda_model(n_topics, recalculate=True)
