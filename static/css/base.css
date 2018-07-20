@@ -1,3 +1,40 @@
-.container.ticker-app {
-    margin-top: 70px
+
+
+// #A8D0E6 // light blue
+// #F8E9A1 // yellow
+// #F76C6C // red
+// #374785 // blue
+// #24305E // dark blue
+
+.container-fluid {
+}
+
+body {
+    background-color: #A8D0E6; // #24305E;
+}
+
+#page-content {
+    min-height: 800px;
+}
+
+.form-box {
+    background-color: #F76C6C;
+}
+
+.form-box button {
+    background-color: #24305E;
+    border-color: #24305E;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    background-color: #F76C6C;
+    border-color: #dee2e6 #dee2e6 #F76C6C;
+}
+
+.nav-link, .nav-link:hover {
+    color: #2b2d2f; //#495057
+}
+
+.nav-link.active {
+    color: #2b2d2f !important
 }

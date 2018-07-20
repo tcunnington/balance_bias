@@ -5,13 +5,43 @@ Alternative title
 {% endblock %}
 
 {% block content %}
-<form id="input" method="post" action="/context">
-    <p>Paste an article below (English only)</p>
-    <!--<div><input type="checkbox" name="features" id="close"     value="close" checked><label for="close">Closing price</label></div>-->
-    <!--<div><input type="checkbox" name="features" id="adj_close" value="adj_close"><label for="adj_close">Adjusted closing price</label></div>-->
-    <!--<div><input type="checkbox" name="features" id="open"      value="open"><label for="open">Opening price</label></div>-->
-    <!--<div><input type="checkbox" name="features" id="adj_open"  value="adj_open"><label for="adj_open">Adjusted opening price</label></div>-->
-    <textarea name="article" id="article_input" cols="30" rows="10"></textarea>
-    <div><input type="submit" value="Submit"></div>
-</form>
+
+<section>
+    <h2 class="px-2 mb-3">Article recommendation</h2>
+    <div class="alert alert-warning d-none" role="alert">
+        Oops, something went wrong! Try pasting the article text in directly
+    </div>
+
+    <div class="form-box shadow p-3 rounded">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-url" role="tab" aria-controls="nav-home" aria-selected="true">URL</a>
+                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-text" role="tab" aria-controls="nav-profile" aria-selected="false">Text</a>
+            </div>
+        </nav>
+        <form id="article_input" method="post" action="/recommendations">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-url" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="form-group">
+                        <label for="urlInput" class="my-2">Provide a url for a news article you like (English only)</label>
+                        <input type="url" class="form-control" id="urlInput" name="urlInput" aria-describedby="urlHelp" placeholder="https://www.nytimes.com/...">
+                        <small id="urlHelp" class="form-text text-light">
+                            It's recommended to provide urls for one of our known sources: ____.
+                            For any other sources it's suggested you use the "Text" tab
+                        </small>
+                    </div>
+
+                </div>
+                <div class="tab-pane fade show" id="nav-text" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div class="form-group">
+                        <label for="textInput" class="my-2">Paste an article below (English only)</label>
+                        <textarea id="textInput" class="form-control" name="textInput" placeholder="Paste article text here."></textarea>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button> <!--btn-lg, btn-sm, disabled-->
+        </form>
+    </div>
+</section>
 {% endblock %}
+
