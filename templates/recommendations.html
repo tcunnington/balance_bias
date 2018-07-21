@@ -6,21 +6,55 @@ Contexter Results
 
 {% block content %}
 
-Some things I might want to show:
 
-<header class="content-top">
-    <div class="title">Contexter Results</div>
-    <div class="help">What’s going on here? Click here for help</div>
-</header>
-<main>
-    <p>Topics: {{data.topics}}</p>
-    <div class="floating-page">
-        <article>{{data.article|safe}}</article>
+<section id="original-headline">
+    <h3 class="mb-3">Article:</h3>
+    <img class="float-left mr-3" src="{{data.source_icon}}" alt="" height="80px" width="80px">
+    <h5 class="px-2 mb-3">{{data.headline}}</h5>
+    <div class="clearfix"></div>
+</section>
+
+<section id="topics">
+    <h5 class="my-3">Topics:</h5>
+    <h5>
+    {% for topic in data.topics %}
+    <span class="badge badge-info text-dark border border-secondary">{{topic}}</span>
+    {% endfor %}
+    </h5>
+</section>
+
+<section id="bias">
+    <h5 class="my-3">Bias: {{data.bias}}</h5>
+</section>
+
+<section id="recommendations">
+
+    <h3 class="my-3">Recommendations</h3>
+
+    <div class="list">
+        <div class="row py-2 px-1 border-top border-bottom bg-light">
+            <div class="col-10">Articles</div>
+            <div class="col-2">Sources</div>
+        </div>
+        {% for r in data.recommendations %}
+        <div class="row py-2 px-1 border-bottom">
+            <div class="col-10">
+                <a class="" href="{{r.url}}">{{r.headline}}</a>
+                <p class="">
+                    {{r.content}}
+                </p>
+            </div>
+            <div class="col-2 bias-{{r.bias}} border-left">
+                {{r.source}}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-</main>
-<aside class="details">
-    Click to show extra details on the article processing
-</aside>
+
+
+
+
+</section>
 
 {% endblock %}
 

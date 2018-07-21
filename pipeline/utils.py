@@ -48,12 +48,11 @@ def is_punct_space(token):
 
 def read_doc_by_line(filename):
     """
-    generator to read in docs from the file and un-escape the original line breaks in the text
+    generator to read in a file one line at a time, and un-escape the original line breaks in the text
     """
-
     with codecs.open(filename, encoding='utf_8') as f:
         for doc in f:
-            yield doc.replace('\\n', '\n')
+            yield doc.replace('\\n', '\n') # TODO remove?
 
 def lemmatize_clean(spacy_itr):
     """

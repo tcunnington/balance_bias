@@ -1,11 +1,11 @@
 import os
-
+import numpy as np
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.word2vec import LineSentence
 
 from pipeline.paths import Paths
-
+from pipeline.utils import *
 
 class LDABuilder:
 
@@ -93,6 +93,30 @@ class LDABuilder:
 
         return lda
 
+    def get_topics_matrix(self, n_topics=50, recalculate=False, from_scratch=True):
+
+        num_topics = lda_model.num_topics
+        filepath = '' # TODO get filepath based on ntopics
+        N = 2534 # TODO ...
+
+        if not os.path.isfile(filepath) or recalculate:
+            matrix = np.zeros(N, num_topics)
+
+            for parsed_doc in read_doc_by_line(self.paths.trigram_corpus_filepath()):
+                bow = self.trigram_doc_to_bow(parsed_doc)
+                # topics come in list of (topic#, weight)
+                topics = lda_model[bow]
+                [idxs, weights] = list(zip(*topics))
+                topic_vec = np.zeros(num_topics)
+                np.put(topic_vec, idxs, weights)  ## matrix[i], *list(zip(*topics))
+                print(sum([x[1] for x in topics]))
+
+            np.save(filepath, matrix)
+        else:
+            matrix = np.load(filepath)
+
+        return matrix
+    
 
     def trigram_doc_to_bow(self, parseed_doc):
         # Creating a bag-of-words representation

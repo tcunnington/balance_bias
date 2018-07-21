@@ -36,21 +36,31 @@ def about():
 
 @app.route('/recommendations', methods=['POST'])
 def context():
-    print(list(request.form.keys()))
-    article = request.form.get('article')
-    # features = request.form.getlist('features')
+    url = request.form.get('urlInput')
+    text = request.form.get('textInput')
 
-    # raw_html = spacy.displacy.render(prep.nlp(article), style='ent')
-
-    # parsed_doc = prep.process_doc(article)
+    # if url is not None:
+    #     parsed_doc = scrape(url)
+    # else:
+    #     parsed_doc = prep.process_doc(text)
+    #
     # bow = lda_builder.trigram_doc_to_bow(parsed_doc)
     # topic_ids = lda_builder.choose_topics_subset(lda[bow])
-    #
-    # render_data = {
-    #     'article':raw_html,
-    #     'topics': topic_ids
-    # }
-    # return render_template('recommendations.html', data=render_data)
+
+    source_icon = '/static/imgs/cnn.jpg'
+    headline = 'Michael Cohen Secretly Taped Trump Discussing Payment to Playboy Model'
+    topic_names = ['Russia', 'Cohen', 'Collusion', 'White House', 'Election']
+    bias_score = 4.5
+    recommendations = [{'headline':'YAAAY', 'content':'aklsdjfhak Discussing ljsdfh lad  blahrh asdkjh', 'source':'WP', 'bias':3} for i in range(5)]
+
+    render_data = {
+        'source_icon': source_icon,
+        'headline': headline,
+        'topics': topic_names,
+        'bias': bias_score,
+        'recommendations': recommendations
+    }
+    return render_template('recommendations.html', data=render_data)
 
 if __name__ == '__main__':
   app.run(port=33507)

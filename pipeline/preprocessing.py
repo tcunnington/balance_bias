@@ -88,7 +88,7 @@ class Preprocessor():
 
             print('Building bi-gram model...')
             unigram_sentences = LineSentence(self.paths.unigram_sentences_filepath)
-            bigram_model = Phrases(unigram_sentences)  # TODO look into supplying common words to avoid for better phrases
+            bigram_model = Phrases(unigram_sentences)  # TODO look into supplying stop words here for better phrases
             bigram_model = Phraser(bigram_model)
             print('Writing model...')
             bigram_model.save(self.paths.bigram_model_filepath)

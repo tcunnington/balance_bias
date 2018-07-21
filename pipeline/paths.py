@@ -17,7 +17,7 @@ class Paths:
         self.trigram_model_filepath      = os.path.join(self.intermediate_directory, 'trigram_model_all') # trigram.model
         self.trigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'trigram_sentences_all.txt')
         # self.trigram_reviews_filepath    = os.path.join(self.intermediate_directory, 'trigram_transformed_reviews_all.txt')
-        self.trigram_corpus_filepath = os.path.join(self.intermediate_directory, 'trigram_transformed_corpus_all.txt')
+        self.trigram_corpus_filepath     = os.path.join(self.intermediate_directory, 'trigram_transformed_corpus_all.txt')
 
         # models
         self.trigram_dictionary_filepath = os.path.join(self.intermediate_directory, 'trigram_dict_all.dict')#'trigram.dict')
