@@ -26,6 +26,7 @@ class Preprocessor():
         # note: this is a different segmentation, but doesn't seem to be problematic
         type(nlp)
         nlp.add_pipe(nlp.create_pipe('sentencizer'))
+        print(nlp.pipe_names)
         self.nlp = nlp
 
         if preload_models:
@@ -206,5 +207,4 @@ class Preprocessor():
 
         corpus_filepath = self.paths.corpus_filepath
         return self.nlp.pipe(read_doc_by_line(corpus_filepath),
-                      batch_size=batch_size, n_threads=n_threads,
-                      disable=disable, **kwargs)
+                      batch_size=batch_size, n_threads=n_threads, **kwargs)
