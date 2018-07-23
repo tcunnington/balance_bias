@@ -118,7 +118,14 @@ class LDABuilder:
                 topic_vec = self.create_topic_vec(num_topics, topics)
                 vecs.append(topic_vec)
 
-            matrix = np.vstack(vecs)
+                if matrix is None:
+                    matrix = topic_vec
+                else:
+                    matrix = np.vstack((matrix, topic_vec))
+
+            row_sums = matrix.sum(axis=1)
+            matrix = matrix / row_sums[:, np.newaxis]
+
             np.save(filepath, matrix)
         else:
             matrix = np.load(filepath)
@@ -136,21 +143,23 @@ class LDABuilder:
 
     def cosine_similarity_corpus(self, topics, n=10):
         n_topics = len(topics)
+        topics = topics / topics.sum()
+        # corpus topic vectors should already be normalized
         X = self.get_corpus_topics_matrix(n_topics, from_scratch=False)
         z = np.dot(X, topics)
         return np.argpartition(z, -n)[-n:]
 
+    #
+    # def trigram_doc_to_bow(self, parsed_doc_tokens):
+    #     # TODO this is a bad method because it has an implicit loading of a multi-hundred MB model-> change or remove
+    #     # Creating a bag-of-words representation and getting BOW
+    #     # Do not use if you need this multiple times
+    #     trigram_dictionary = self.get_corpus_dict()
+    #     return trigram_dictionary.doc2bow(parsed_doc_tokens)
 
-    def trigram_doc_to_bow(self, parsed_doc_tokens):
-        # TODO this is a bad method because it has an implicit loading of a multi-hundred MB model-> change or remove
-        # Creating a bag-of-words representation and getting BOW
-        # Do not use if you need this multiple times
-        trigram_dictionary = self.get_corpus_dict()
-        return trigram_dictionary.doc2bow(parsed_doc_tokens)
 
-
-    def choose_topics_subset(self, lda_output, topn=3):
+    def choose_topics_subset(self, lda_output, topn=5):
         """
         Give a subset of topics from LDA output.
         """
-        return [x[0] for x in lda_output[:topn]]
+        return [x[0] for x in lda_output[:topn] if x[0] > 0.15]

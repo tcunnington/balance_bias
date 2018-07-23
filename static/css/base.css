@@ -1,17 +1,15 @@
-
-
+/*
 // #A8D0E6 // light blue
 // #F8E9A1 // yellow
 // #F76C6C // red
 // #374785 // blue
 // #24305E // dark blue
-
-.container-fluid {
-}
+/*/
 
 body {
     background-color: #A8D0E6; // #24305E;
 }
+
 
 #page-content {
     min-height: 800px;
@@ -40,9 +38,6 @@ body {
     color: #2b2d2f !important
 }
 
-// #recommendations a {color: #212529;}
-// #recommendations a:hover {    color: inherit;}
-
 
 #recommendations p {
     max-height: 100px;
@@ -52,3 +47,12 @@ body {
     background-color: #F8E9A1;
 }
 
+#presentation aside {
+    width: 500px;
+    height: 20px;
+    background: linear-gradient(to right, #E53F39 , #233B89);
+}
+
+
+// #recommendations a {color: #212529;}
+// #recommendations a:hover {    color: inherit;}

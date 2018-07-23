@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<section id="presentation">
+    <h1 class="mb-3">Viewpoint</h1>
+    <p>A bubble bursting article recommender</p>
+
+    <img src="{{ url_for('static', filename='imgs/filter_bubble.png') }}" width="600px" height="400px"
+         alt="Filter bubbles determine what news we see and what we don't">
+
+    <blockquote>
+        <q>How can we understand each other when we essentially live in different realities?</q>
+    </blockquote>
+
+    <img src="{{ url_for('static', filename='imgs/scrape_icons.png') }}" width="600px" height="400px"
+         alt="I scraped from a variety of news sources">
+
+    <h3>Topic modeling</h3>
+    <h5>with Latent Dirichlet Analysis (LDA)</h5>
+
+    <img src="{{ url_for('static', filename='imgs/lda_example.png') }}" width="600px" height="400px"
+         alt="LDA">
+
+
+    <h3>Bias Model</h3>
+
+    <aside>&nbsp</aside>
+
+</section>
+{% endblock %}

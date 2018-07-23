@@ -20,6 +20,7 @@ corpus = Corpus(source)
 prep = Preprocessor(source, preload_models=True)
 lda_builder = LDABuilder(source)
 lda = lda_builder.get_lda_model()
+trigram_dictionary = lda_builder.get_corpus_dict()
 
 @app.route('/')
 def index():
@@ -29,13 +30,20 @@ def index():
 def about():
     return render_template('about.html')
 
+@app.route('/presentation')
+def presentation():
+    return render_template('presentation.html')
+
 @app.route('/recommendations', methods=['POST'])
 def context():
-    url = request.form.get('urlInput')
-    text = request.form.get('textInput')
+    url = request.form.get('urlInput', '')
+    text = request.form.get('textInput', '')
 
-    if url is not None:
+    # print(url, text)
+
+    if url != '':
         try:
+            print('Trying to scrape')
             title, text = ArticleScraper.scrape(url)
             parsed_doc = prep.process_doc(text)
         except ArticleException as e:
@@ -44,10 +52,11 @@ def context():
             redirect('/')
             return
     else:
+        print('Parsing raw input')
         title = 'News article title....'
         parsed_doc = prep.process_doc(text)
 
-    bow = lda_builder.trigram_doc_to_bow(parsed_doc)
+    bow = trigram_dictionary.doc2bow(parsed_doc)
     doc_topics = lda[bow]
 
     # topics display names

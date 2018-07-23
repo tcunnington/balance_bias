@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="TODO: ===== Skeleton application demoing Heroku and Flask integration.">
     <meta name="author" content="Taylor Cunnington">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <!-- <link rel="icon" href="favicon.ico"> -->
 
     <title>{% block title %}ViewpointApp{% endblock %}</title>
@@ -22,6 +23,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="nav navbar-nav">
+            <!--<li class="nav-item"><a class="nav-link" href="/presentation">Presentation</a></li>-->
             <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
             <li class="nav-item"><a class="nav-link" target="_blank" href="https://www.linkedin.com/">LinkedIn</a></li>
             <li class="nav-item"><a class="nav-link" target="_blank" href="https://www.github.com/">GitHub</a></li>
@@ -35,7 +37,7 @@
     </div>
     <!--<div class="col">-->
 </div>
-<footer class="bg-light navbar navbar-fixed-bottom">
+<footer class="bg-light navbar navbar-fixed-bottom mt-3">
     <small>Website and app created by Taylor Cunnington. See About page above for more info.. Powered by NewsApi or whatever??</small>
 </footer>
 

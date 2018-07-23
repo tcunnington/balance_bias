@@ -1,4 +1,4 @@
-from paths import Paths
+from pipeline.paths import Paths
 import pandas as pd
 
 class Corpus:
