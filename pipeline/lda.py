@@ -93,6 +93,7 @@ class LDABuilder:
 
         return lda
 
+
     def get_corpus_topics_matrix(self, n_topics=50, recalculate=False, from_scratch=True):
 
         lda = self.get_lda_model(n_topics)
@@ -105,23 +106,25 @@ class LDABuilder:
                 raise ValueError('No topics matrix file exists but from_scratch is False')
 
             matrix = None
+            trigram_dictionary = self.get_corpus_dict()
+            vecs = []
 
             for parsed_doc in read_doc_by_line(self.paths.trigram_corpus_filepath):
-                bow = self.trigram_doc_to_bow(parsed_doc)
+                # doc is already parsed so just needs to remove stopwords and get tokens as list, then to bow
+                bow = trigram_dictionary.doc2bow(get_doc_tokens(parsed_doc))
+
                 # topics come in list of (topic#, weight)
                 topics = lda[bow]
                 topic_vec = self.create_topic_vec(num_topics, topics)
+                vecs.append(topic_vec)
 
-                if matrix is None:
-                    matrix = topic_vec
-                else:
-                    matrix = np.vstack((matrix, topic_vec))
-
+            matrix = np.vstack(vecs)
             np.save(filepath, matrix)
         else:
             matrix = np.load(filepath)
 
         return matrix
+
 
     @staticmethod
     def create_topic_vec(num_topics, topics):
@@ -130,19 +133,20 @@ class LDABuilder:
         np.put(topic_vec, idxs, weights)
         return topic_vec
 
+
     def cosine_similarity_corpus(self, topics, n=10):
         n_topics = len(topics)
         X = self.get_corpus_topics_matrix(n_topics, from_scratch=False)
         z = np.dot(X, topics)
         return np.argpartition(z, -n)[-n:]
 
-    def doc_to_token_strings(self, parsed_doc):
-        return [token.text for token in parsed_doc]
 
-    def trigram_doc_to_bow(self, parsed_doc):
-        # Creating a bag-of-words representation
+    def trigram_doc_to_bow(self, parsed_doc_tokens):
+        # TODO this is a bad method because it has an implicit loading of a multi-hundred MB model-> change or remove
+        # Creating a bag-of-words representation and getting BOW
+        # Do not use if you need this multiple times
         trigram_dictionary = self.get_corpus_dict()
-        return trigram_dictionary.doc2bow(self.doc_to_token_strings(parsed_doc))
+        return trigram_dictionary.doc2bow(parsed_doc_tokens)
 
 
     def choose_topics_subset(self, lda_output, topn=3):

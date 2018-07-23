@@ -1,5 +1,6 @@
 import codecs
 import re
+from gensim.parsing.preprocessing import STOPWORDS
 
 
 def batch_write(wfilename, iterator, batch_size=100):
@@ -32,6 +33,8 @@ def add_newline(itr):
 def prep_whitespace(text):
     return re.sub(r'\s+', ' ', text) # .replace('\n', '\\n') # instead of simply removing all newlines..
 
+def get_doc_tokens(parsed_doc):
+    return [term for term in parsed_doc if term not in STOPWORDS]
 
 #################################################
 #

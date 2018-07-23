@@ -2,7 +2,6 @@ import spacy
 import os
 from gensim.models.phrases import Phrases, Phraser
 from gensim.models.word2vec import LineSentence
-from gensim.parsing.preprocessing import STOPWORDS
 
 from pipeline.paths import Paths
 from pipeline.utils import *
@@ -185,7 +184,7 @@ class Preprocessor():
         # Applying our second-order phrase model to join longer phrases
         trigram_doc = trigram_model[bigram_doc]
         # Removing stopwords
-        return [term for term in trigram_doc if term not in STOPWORDS]
+        return get_doc_tokens(trigram_doc)
 
     #################################################
     #
