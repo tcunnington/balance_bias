@@ -18,6 +18,7 @@ class Paths:
         self.trigram_sentences_filepath  = os.path.join(self.intermediate_directory, 'trigram_sentences_all.txt')
         # self.trigram_reviews_filepath    = os.path.join(self.intermediate_directory, 'trigram_transformed_reviews_all.txt')
         self.trigram_corpus_filepath     = os.path.join(self.intermediate_directory, 'trigram_transformed_corpus_all.txt')
+        self.corpus_meta_data            = os.path.join(self.intermediate_directory, 'corpus_meta.csv')
 
         # models
         self.trigram_dictionary_filepath = os.path.join(self.intermediate_directory, 'trigram_dict_all.dict')#'trigram.dict')
@@ -35,6 +36,9 @@ class Paths:
 
     def get_ldaviz_filepath(self, n_topics):
         return os.path.join(self.intermediate_directory, 'ldaviz.n' + str(int(n_topics)) + '.model')
+
+    def get_topics_matrix_filepath(self, n_topics):
+        return os.path.join(self.intermediate_directory, 'topics.n' + str(int(n_topics)) + '.npy')
 
     def output_file(self, file):
         return os.path.join(self.output_directory, file)

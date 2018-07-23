@@ -30,7 +30,7 @@ def add_newline(itr):
         yield item + '\n'
 
 def prep_whitespace(text):
-    return re.sub(r'\s+', ' ', text)
+    return re.sub(r'\s+', ' ', text) # .replace('\n', '\\n') # instead of simply removing all newlines..
 
 
 #################################################

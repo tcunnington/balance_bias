@@ -93,30 +93,49 @@ class LDABuilder:
 
         return lda
 
-    def get_topics_matrix(self, n_topics=50, recalculate=False, from_scratch=True):
+    def get_corpus_topics_matrix(self, n_topics=50, recalculate=False, from_scratch=True):
 
-        num_topics = lda_model.num_topics
-        filepath = '' # TODO get filepath based on ntopics
-        N = 2534 # TODO ...
+        lda = self.get_lda_model(n_topics)
+        num_topics = lda.num_topics
+        filepath = self.paths.get_topics_matrix_filepath(n_topics)
 
         if not os.path.isfile(filepath) or recalculate:
-            matrix = np.zeros(N, num_topics)
 
-            for parsed_doc in read_doc_by_line(self.paths.trigram_corpus_filepath()):
+            if not from_scratch:
+                raise ValueError('No topics matrix file exists but from_scratch is False')
+
+            matrix = None
+
+            for parsed_doc in read_doc_by_line(self.paths.trigram_corpus_filepath):
                 bow = self.trigram_doc_to_bow(parsed_doc)
                 # topics come in list of (topic#, weight)
-                topics = lda_model[bow]
-                [idxs, weights] = list(zip(*topics))
-                topic_vec = np.zeros(num_topics)
-                np.put(topic_vec, idxs, weights)  ## matrix[i], *list(zip(*topics))
-                print(sum([x[1] for x in topics]))
+                topics = lda[bow]
+                topic_vec = self.create_topic_vec(num_topics, topics)
+
+                if matrix is None:
+                    matrix = topic_vec
+                else:
+                    matrix = np.vstack((matrix, topic_vec))
 
             np.save(filepath, matrix)
         else:
             matrix = np.load(filepath)
 
         return matrix
-    
+
+    @staticmethod
+    def create_topic_vec(num_topics, topics):
+        [idxs, weights] = list(zip(*topics))
+        topic_vec = np.zeros(num_topics)
+        np.put(topic_vec, idxs, weights)
+        return topic_vec
+
+    def cosine_similarity_corpus(self, topics, n=10):
+        n_topics = len(topics)
+        X = self.get_corpus_topics_matrix(n_topics, from_scratch=False)
+        z = np.dot(X, topics)
+        return np.argpartition(z, -n)[-n:]
+
 
     def trigram_doc_to_bow(self, parseed_doc):
         # Creating a bag-of-words representation
@@ -124,7 +143,7 @@ class LDABuilder:
         return trigram_dictionary.doc2bow(parseed_doc)
 
 
-    def choose_topics_subset(self, lda_output, topn=1):
+    def choose_topics_subset(self, lda_output, topn=3):
         """
         Give a subset of topics from LDA output.
         """
