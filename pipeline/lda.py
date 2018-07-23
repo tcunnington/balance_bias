@@ -136,11 +136,13 @@ class LDABuilder:
         z = np.dot(X, topics)
         return np.argpartition(z, -n)[-n:]
 
+    def doc_to_token_strings(self, parsed_doc):
+        return [token.text for token in parsed_doc]
 
-    def trigram_doc_to_bow(self, parseed_doc):
+    def trigram_doc_to_bow(self, parsed_doc):
         # Creating a bag-of-words representation
         trigram_dictionary = self.get_corpus_dict()
-        return trigram_dictionary.doc2bow(parseed_doc)
+        return trigram_dictionary.doc2bow(self.doc_to_token_strings(parsed_doc))
 
 
     def choose_topics_subset(self, lda_output, topn=3):
