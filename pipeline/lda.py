@@ -105,7 +105,6 @@ class LDABuilder:
             if not from_scratch:
                 raise ValueError('No topics matrix file exists but from_scratch is False')
 
-            matrix = None
             trigram_dictionary = self.get_corpus_dict()
             vecs = []
 
@@ -118,13 +117,9 @@ class LDABuilder:
                 topic_vec = self.create_topic_vec(num_topics, topics)
                 vecs.append(topic_vec)
 
-                if matrix is None:
-                    matrix = topic_vec
-                else:
-                    matrix = np.vstack((matrix, topic_vec))
-
-            row_sums = matrix.sum(axis=1)
-            matrix = matrix / row_sums[:, np.newaxis]
+            matrix = np.vstack(vecs)
+            row_sums = np.linalg.norm(matrix, axis=1, keepdims=True)
+            matrix = matrix / row_sums
 
             np.save(filepath, matrix)
         else:
