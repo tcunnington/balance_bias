@@ -3,6 +3,7 @@ import numpy as np
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.word2vec import LineSentence
+from gensim.similarities import MatrixSimilarity
 
 from pipeline.paths import Paths
 from pipeline.utils import *
@@ -133,6 +134,21 @@ class LDABuilder:
 
         return matrix
 
+    def get_similarity_index(self, trigram_dictionary, lda, recalculate=False, from_scratch=True):
+
+        filepath = self.paths.get_lda_index(lda.num_topics)
+
+        if not os.path.isfile(filepath) or recalculate:
+
+            if not from_scratch:
+                raise ValueError('No similarity index file exists but from_scratch is False')
+
+            index = MatrixSimilarity(lda[trigram_dictionary])
+            index.save(filepath)
+        else:
+            index = MatrixSimilarity.load(filepath)
+
+        return index
 
     @staticmethod
     def create_topic_vec(num_topics, topics):
@@ -150,7 +166,7 @@ class LDABuilder:
     def cosine_similarity_corpus(self, topics, topics_matrix, n=10):
         topics = topics / np.linalg.norm(topics)
         # corpus topic vectors should already be normalized
-        z = np.dot(topics_matrix, topics)
+        z = 1-np.dot(topics_matrix, topics)
         return np.argpartition(z, -n)[-n:]
 
 

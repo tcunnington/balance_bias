@@ -2,30 +2,30 @@
 
 class Sources:
 
-    urls = {
-        'Associated Press': 'https://apnews.com/',
-        'Breitbart News': 'http://www.breitbart.com',
-        'Buzzfeed': 'https://www.buzzfeed.com',
-        'CNN': 'http://us.cnn.com',
-        'Fox News': 'http://www.foxnews.com',
-        'MSNBC': 'http://www.msnbc.com',
-        'National Review': 'https://www.nationalreview.com/',
-        'Politico': 'https://www.politico.com',
-        'Reuters': 'http://www.reuters.com',
-        'The American Conservative': 'http://www.theamericanconservative.com/',
-        'The Hill': 'http://thehill.com',
-        'The New York Times': 'http://www.nytimes.com',
-        'The Wall Street Journal': 'http://www.wsj.com',
-        'The Washington Post': 'https://www.washingtonpost.com',
-        'The Weekly Standard': "https://www.weeklystandard.com/",
-        'Washington Examiner': "https://www.washingtonexaminer.com/",
-        'NPR': "https://www.npr.org/",
-        'The Guardian': "https://www.theguardian.com/",
-        'Occupy Democrats': "http://occupydemocrats.com/",
-        'Daily Kos': "https://www.dailykos.com/",
-        'The Atlantic': "https://www.theatlantic.com/",
-        'Vox': "https://www.vox.com/",
-        'Huffpost': "https://www.huffingtonpost.com/",
+    name_urls = {
+        'Associated Press': 'apnews.com',
+        'Breitbart News': 'www.breitbart.com',
+        'Buzzfeed': 'www.buzzfeed.com',
+        'CNN': 'us.cnn.com',
+        'Fox News': 'www.foxnews.com',
+        'MSNBC': 'www.msnbc.com',
+        'National Review': 'www.nationalreview.com',
+        'Politico': 'www.politico.com',
+        'Reuters': 'www.reuters.com',
+        'The American Conservative': 'www.theamericanconservative.com',
+        'The Hill': 'thehill.com',
+        'The New York Times': 'www.nytimes.com',
+        'The Wall Street Journal': 'www.wsj.com',
+        'The Washington Post': 'www.washingtonpost.com',
+        'The Weekly Standard': "www.weeklystandard.com",
+        'Washington Examiner': "www.washingtonexaminer.com",
+        'NPR': "www.npr.org/",
+        'The Guardian': "www.theguardian.com",
+        'Occupy Democrats': "occupydemocrats.com",
+        'Daily Kos': "www.dailykos.com",
+        'The Atlantic': "www.theatlantic.com",
+        'Vox': "www.vox.com/",
+        'Huffpost': "www.huffingtonpost.com",
     }
 
     bias_score = {
@@ -54,7 +54,14 @@ class Sources:
         for bias, source_list in self.bias_sources_map.items():
             self.sources_bias_map.update({s: bias for s in source_list})
 
+        self.url_names = {url:name for name,url in self.name_urls.items()}
+
+    @staticmethod
+    def resolve_source_id(source_name):
+        return source_name.lower().replace(' ', '-')
 
 
 if __name__ == '__main__':
-    print(Sources().sources_bias_map)
+    s = Sources()
+    print(s.sources_bias_map)
+    print([s.resolve_source_id(name) for name in s.name_urls.keys()])
