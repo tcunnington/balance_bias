@@ -117,6 +117,9 @@ class LDABuilder:
                 topic_vec = self.create_topic_vec(num_topics, topics)
                 vecs.append(topic_vec)
 
+                if len(topics) == 0:
+                    print('No good article: ' + parsed_doc)
+
             matrix = np.vstack(vecs)
             row_sums = np.linalg.norm(matrix, axis=1, keepdims=True)
             matrix = matrix / row_sums
@@ -130,8 +133,13 @@ class LDABuilder:
 
     @staticmethod
     def create_topic_vec(num_topics, topics):
-        [idxs, weights] = list(zip(*topics))
+
         topic_vec = np.zeros(num_topics)
+        if len(topics) == 0:
+            print('No topics found, which is strange and should not happen for a real news article.')
+            return topic_vec
+
+        [idxs, weights] = list(zip(*topics))
         np.put(topic_vec, idxs, weights)
         return topic_vec
 
