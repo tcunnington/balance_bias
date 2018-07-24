@@ -18,8 +18,9 @@ ldab = LDABuilder(source_name)
 lda = ldab.get_lda_model(n_topics=n_topics)
 # ldab.lda_pipeline()
 
-trigram_dictionary = ldab.get_corpus_dict()
-ldab.get_similarity_index(trigram_dictionary, lda)
+trigram_dictionary = ldab.get_corpus_dict(from_scratch=False)
+bow_corpus = ldab.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
+ldab.get_similarity_index(bow_corpus, lda)
 
 # LDA Viz
 # lda_viz = LDAViz(ldab)

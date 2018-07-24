@@ -134,7 +134,7 @@ class LDABuilder:
 
         return matrix
 
-    def get_similarity_index(self, trigram_dictionary, lda, recalculate=False, from_scratch=True):
+    def get_similarity_index(self, bow_corpus, lda, recalculate=False, from_scratch=True):
 
         filepath = self.paths.get_lda_index(lda.num_topics)
 
@@ -143,7 +143,7 @@ class LDABuilder:
             if not from_scratch:
                 raise ValueError('No similarity index file exists but from_scratch is False')
 
-            index = MatrixSimilarity(lda[trigram_dictionary])
+            index = MatrixSimilarity(lda[bow_corpus])
             index.save(filepath)
         else:
             index = MatrixSimilarity.load(filepath)
