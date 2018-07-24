@@ -31,7 +31,7 @@ def add_newline(itr):
         yield item + '\n'
 
 def prep_whitespace(text):
-    return re.sub(r'\s+', ' ', text) # .replace('\n', '\\n') # instead of simply removing all newlines..
+    return re.sub(r'\s+', ' ', text).strip() # .replace('\n', '\\n') # instead of simply removing all newlines..
 
 def get_doc_tokens(parsed_doc):
     return [term for term in parsed_doc if term not in STOPWORDS]

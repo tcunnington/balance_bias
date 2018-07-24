@@ -4,6 +4,7 @@ from pipeline.lda import LDABuilder
 from pipeline.corpus import Corpus
 from article_scraper import ArticleScraper
 from newspaper.article import ArticleException
+from sources import Sources
 
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
@@ -16,11 +17,14 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 #
 
 source = 'all_the_news'
+n_topics = 75
 corpus = Corpus(source)
 prep = Preprocessor(source, preload_models=True)
 lda_builder = LDABuilder(source)
-lda = lda_builder.get_lda_model()
-trigram_dictionary = lda_builder.get_corpus_dict()
+lda = lda_builder.get_lda_model(n_topics, from_scratch=False)
+trigram_dictionary = lda_builder.get_corpus_dict(from_scratch=False)
+corpus_topics_matrix = lda_builder.get_corpus_topics_matrix(n_topics, from_scratch=False)
+sources = Sources()
 
 @app.route('/')
 def index():
@@ -35,16 +39,16 @@ def presentation():
     return render_template('presentation.html')
 
 @app.route('/recommendations', methods=['POST'])
-def context():
+def recommendations():
     url = request.form.get('urlInput', '')
     text = request.form.get('textInput', '')
 
-    # print(url, text)
 
     if url != '':
         try:
             print('Trying to scrape')
             title, text = ArticleScraper.scrape(url)
+            # print(title, text)
             parsed_doc = prep.process_doc(text)
         except ArticleException as e:
             # TODO If the download for some reason fails (ex. 404) we need to show an error msg and redirect to main
@@ -61,19 +65,21 @@ def context():
 
     # topics display names
     topic_ids = lda_builder.choose_topics_subset(doc_topics)
+    print(topic_ids)
 
     # recommendations
     topic_vec = lda_builder.create_topic_vec(lda.num_topics, doc_topics)
-    closest_idxs = lda_builder.cosine_similarity_corpus(topic_vec)
+    closest_idxs = lda_builder.cosine_similarity_corpus(topic_vec, corpus_topics_matrix)
     rdf = corpus.meta_data.loc[closest_idxs]
     recommendations = [row.to_dict() for i, row in rdf[['title', 'publication','url','partial_content']].iterrows()]
+    # print(rdf)
 
 
     source_icon = '/static/imgs/cnn.jpg'
     # headline = 'Michael Cohen Secretly Taped Trump Discussing Payment to Playboy Model'
-    topic_names = ['Russia', 'Cohen', 'Collusion', 'White House', 'Election'] # topic_ids
-    bias_score = 4.5
-    # recommendations = [{'headline':'YAAAY', 'content':'aklsdjfhak Discussing ljsdfh lad  blahrh asdkjh', 'source':'WP', 'bias':3} for i in range(5)]
+    topic_names = ['Russia', 'Cohen', 'Collusion', 'White House', 'Election'] # TODO topic_ids
+    source_name = 'The New York Times' # TODO get from url
+    bias_score = sources.sources_bias_map[source_name] # TODO display name
 
     render_data = {
         'source_icon': source_icon,

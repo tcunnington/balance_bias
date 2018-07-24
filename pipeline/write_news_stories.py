@@ -22,8 +22,8 @@ def story_content(file_pattern):
                 yield prep_whitespace(story)
 
 def partial_text(text):
-    text = re.sub("['\" ]{2,}", " ", text)
-    return prep_whitespace(text)[:500] + '...'
+    text = re.sub("[‹»›„‚“‟‘‛”’\"❛❜❝❞❮❯〝〞 ]{2,}", " ", text)
+    return prep_whitespace(text)[:500]
 
 def write_meta_data():
     """

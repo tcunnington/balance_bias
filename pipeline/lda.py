@@ -96,14 +96,15 @@ class LDABuilder:
 
     def get_corpus_topics_matrix(self, n_topics=50, recalculate=False, from_scratch=True):
 
-        lda = self.get_lda_model(n_topics)
-        num_topics = lda.num_topics
         filepath = self.paths.get_topics_matrix_filepath(n_topics)
 
         if not os.path.isfile(filepath) or recalculate:
 
             if not from_scratch:
                 raise ValueError('No topics matrix file exists but from_scratch is False')
+
+            lda = self.get_lda_model(n_topics)
+            num_topics = lda.num_topics
 
             trigram_dictionary = self.get_corpus_dict()
             vecs = []
@@ -125,7 +126,9 @@ class LDABuilder:
             matrix = matrix / row_sums
 
             np.save(filepath, matrix)
+            print('Topics matrix (n_topics={}) written to {}'.format(n_topics, filepath))
         else:
+            print('Loading topics matrix (n_topics={})...'.format(n_topics))
             matrix = np.load(filepath)
 
         return matrix
@@ -144,21 +147,11 @@ class LDABuilder:
         return topic_vec
 
 
-    def cosine_similarity_corpus(self, topics, n=10):
-        n_topics = len(topics)
+    def cosine_similarity_corpus(self, topics, topics_matrix, n=10):
         topics = topics / np.linalg.norm(topics)
         # corpus topic vectors should already be normalized
-        X = self.get_corpus_topics_matrix(n_topics, from_scratch=False)
-        z = 1 - np.dot(X, topics)
+        z = np.dot(topics_matrix, topics)
         return np.argpartition(z, -n)[-n:]
-
-    #
-    # def trigram_doc_to_bow(self, parsed_doc_tokens):
-    #     # TODO this is a bad method because it has an implicit loading of a multi-hundred MB model-> change or remove
-    #     # Creating a bag-of-words representation and getting BOW
-    #     # Do not use if you need this multiple times
-    #     trigram_dictionary = self.get_corpus_dict()
-    #     return trigram_dictionary.doc2bow(parsed_doc_tokens)
 
 
     def choose_topics_subset(self, lda_output, topn=5):
