@@ -53,7 +53,7 @@ def context():
             return
     else:
         print('Parsing raw input')
-        title = 'News article title....'
+        title = 'Raw text: ' + text[:50]
         parsed_doc = prep.process_doc(text)
 
     bow = trigram_dictionary.doc2bow(parsed_doc)

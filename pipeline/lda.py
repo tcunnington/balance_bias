@@ -146,10 +146,10 @@ class LDABuilder:
 
     def cosine_similarity_corpus(self, topics, n=10):
         n_topics = len(topics)
-        topics = topics / topics.sum()
+        topics = topics / np.linalg.norm(topics)
         # corpus topic vectors should already be normalized
         X = self.get_corpus_topics_matrix(n_topics, from_scratch=False)
-        z = np.dot(X, topics)
+        z = 1 - np.dot(X, topics)
         return np.argpartition(z, -n)[-n:]
 
     #

@@ -41,6 +41,7 @@ body {
 
 #recommendations p {
     max-height: 100px;
+    overflow-y: hidden;
 }
 
 .badge-info {
