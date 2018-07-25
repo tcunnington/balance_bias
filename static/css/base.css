@@ -45,6 +45,10 @@ body {
     overflow-y: hidden;
 }
 
+#page-content .snippet {
+    margin-left: 88px;
+}
+
 .badge-info {
     background-color: #F8E9A1;
 }
@@ -53,6 +57,42 @@ body {
     width: 500px;
     height: 20px;
     background: linear-gradient(to right, #E53F39 , #233B89);
+}
+
+.bias-color {
+    height: 100%;
+}
+
+.bias-color.hyper-left {
+    background: #00165b;
+}
+
+.bias-color.left {
+    //background: #24305E;
+    background: linear-gradient(to bottom right, #374785, #24305E);
+}
+
+.bias-color.center-left {
+    //background: #374785;
+    background: linear-gradient(to bottom right, #F8E9A1, #24305E);
+}
+
+.bias-color.center {
+    background: #F8E9A1;
+}
+
+.bias-color.center-right {
+    //background: #F76C6C;
+    background: linear-gradient(to bottom right, #F8E9A1, #F76C6C);
+}
+
+.bias-color.right {
+    //background: #E0140D;
+    background: linear-gradient(to bottom right, #F76C6C, #E0140D);
+}
+
+.bias-color.hyper-right {
+    background: #750300;
 }
 
 
