@@ -9,18 +9,22 @@ Contexter Results
 
 <section id="original-headline">
     <h3 class="mb-3">Article:</h3>
-    <img class="float-left mr-3" src="{{data.source_icon}}" alt="" height="80px" width="80px">
+    <img class="float-left mr-2" src="{{data.source_icon}}" alt="" height="80px" width="80px">
     <h5 class="px-2 mb-3">{{data.headline}}</h5>
+    <p class="snippet">{{data.text_snippet}}</p>
     <div class="clearfix"></div>
 </section>
 
 <section id="topics">
     <h5 class="my-3">Topics:</h5>
-    <h5>
+    <p>
     {% for topic in data.topics %}
-    <span class="badge badge-info text-dark border border-secondary">{{topic}}</span>
+        <div>
+            <span class="badge badge-info text-dark border border-secondary">{{topic.id}}</span>
+            {{topic.words}}
+        </div>
     {% endfor %}
-    </h5>
+    </p>
 </section>
 
 <section id="bias">
@@ -44,8 +48,12 @@ Contexter Results
                     {{r.partial_content}}
                 </p>
             </div>
-            <div class="col-2 bias-{{r.bias}} border-left">
-                {{r.publication}}
+            <div class="col-2 border-left py-3">
+                <div class="bias-color {{r.bias}}">
+                    <img src="{{r.icon_url}}" alt="{{r.publication}}"
+                        height="50px" width="50px">
+
+                </div>
             </div>
         </div>
         {% endfor %}

@@ -17,7 +17,10 @@ class LDAViz:
         self.lda_builder = lda_builder
         self.paths = lda_builder.paths
 
-    def viz_pipeline(self, n_topics, html_filename='lda_viz.html', recalculate=True):
+    def viz_pipeline(self, n_topics, html_filename=None, recalculate=True):
+        if html_filename is None:
+            html_filename = self.paths.get_ldaviz_filepath(n_topics)
+
         trigram_dictionary = self.lda_builder.get_corpus_dict(from_scratch=False)
         bow = self.lda_builder.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
         lda = self.lda_builder.get_lda_model(n_topics=n_topics, from_scratch=False)

@@ -29,34 +29,34 @@ class Sources:
     }
 
     bias_score = {
-        'hyper_left': -3,
+        'hyper-left': -3,
         'left': -2,
-        'center_left': -1,
+        'center-left': -1,
         'center': 0,
-        'center_right': 1,
+        'center-right': 1,
         'right': 2,
-        'hyper_right': 3,
+        'hyper-right': 3,
     }
 
     # all potential sources
     bias_sources_map = {
-        'hyper_left':    ['Occupy Democrats','Daily Kos'],
+        'hyper-left':    ['Occupy Democrats','Daily Kos'],
         'left':          ['MSNBC','Buzzfeed News','The Atlantic','Vox','Huffpost','Talking Points Memo'],
-        'center_left':   ['The Guardian', 'Politico','The Washington Post','The New York Times','CNN', 'Business Insider'],
+        'center-left':   ['The Guardian', 'Politico','The Washington Post','The New York Times','CNN', 'Business Insider'],
         'center':        ['Reuters','Associated Press', 'NPR'],
-        'center_right':  ['The Wall Street Journal','The Hill'],
+        'center-right':  ['The Wall Street Journal','The Hill'],
         'right':         ['National Review', 'New York Post','The Weekly Standard','Examiner', 'Washington Examiner'],
-        'hyper_right':   ['Fox News','Breitbart News','The American Conservative'],
+        'hyper-right':   ['Fox News','Breitbart News','The American Conservative'],
     }
 
     bias_display_names = {
-        'hyper_left': 'Far left',
+        'hyper-left': 'Far left',
         'left': 'Left',
-        'center_left': 'Center-left',
+        'center-left': 'Center-left',
         'center': 'Least Biased',
-        'center_right': 'Center-right',
+        'center-right': 'Center-right',
         'right': 'Right',
-        'hyper_right': 'Far right',
+        'hyper-right': 'Far right',
         'unknown': 'Unknown Source'
     }
 

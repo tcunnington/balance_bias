@@ -13,7 +13,5 @@ class Corpus:
 
 if __name__ == "__main__":
     corp = Corpus('all_the_news')
-
     idxs = [2, 67, 90, 62345]
-
     print(corp.meta_data.loc[idxs])
