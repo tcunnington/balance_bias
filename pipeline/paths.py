@@ -38,7 +38,7 @@ class Paths:
         return os.path.join(self.intermediate_directory, 'topics.n' + str(int(n_topics)) + '.npy')
 
     def get_lda_index(self, n_topics):
-        return os.path.join(self.intermediate_directory, 'similarity.n' + str(int(n_topics)) + '.index')
+        return os.path.join(self.intermediate_directory, 'similarity.n' + str(int(n_topics)))
 
     def output_file(self, file):
         return os.path.join(self.output_directory, file)

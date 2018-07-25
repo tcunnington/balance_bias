@@ -8,10 +8,11 @@ Alternative title
 
 <section>
     <h2 class="px-2 mb-3">Article recommendation</h2>
-    <div class="alert alert-warning d-none" role="alert">
-        Oops, something went wrong! Try pasting the article text in directly
+    {% if scraping_error %}
+    <div class="alert alert-warning" role="alert">
+        Oops, something went wrong! Try another url or paste the article text in directly
     </div>
-
+    {% endif %}
     <div class="form-box shadow p-3 rounded">
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">

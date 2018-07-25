@@ -49,6 +49,17 @@ class Sources:
         'hyper_right':   ['Fox News','Breitbart News','The American Conservative'],
     }
 
+    bias_display_names = {
+        'hyper_left': 'Far left',
+        'left': 'Left',
+        'center_left': 'Center-left',
+        'center': 'Least Biased',
+        'center_right': 'Center-right',
+        'right': 'Right',
+        'hyper_right': 'Far right',
+        'unknown': 'Unknown Source'
+    }
+
     def __init__(self):
         self.sources_bias_map = {}
         for bias, source_list in self.bias_sources_map.items():
