@@ -41,8 +41,8 @@ class Sources:
     # all potential sources
     bias_sources_map = {
         'hyper_left':    ['Occupy Democrats','Daily Kos'],
-        'left':          ['MSNBC','Buzzfeed','The Atlantic','Vox','Huffpost'],
-        'center_left':   ['The Guardian', 'Politico','The Washington Post','The New York Times','CNN',],
+        'left':          ['MSNBC','Buzzfeed News','The Atlantic','Vox','Huffpost','Talking Points Memo'],
+        'center_left':   ['The Guardian', 'Politico','The Washington Post','The New York Times','CNN', 'Business Insider'],
         'center':        ['Reuters','Associated Press', 'NPR'],
         'center_right':  ['The Wall Street Journal','The Hill'],
         'right':         ['National Review', 'New York Post','The Weekly Standard','Examiner', 'Washington Examiner'],

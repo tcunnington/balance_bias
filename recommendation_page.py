@@ -25,7 +25,7 @@ class RecommendationPage:
 
     def append_bias(self, df):
         bias_map = self.sources.sources_bias_map
-        bias = df['publication'].map(lambda x: bias_map.get(x, bias_map.get('The ' + x)))
+        bias = df['publication'].map(lambda x: bias_map.get(x, bias_map.get('The ' + x, bias_map.get(x + ' News'))))
         df['bias_label'] = bias.map(lambda b: self.sources.bias_display_names.get(b))
         df['bias_score'] = bias.map(lambda b: self.sources.bias_score.get(b))
         return df
