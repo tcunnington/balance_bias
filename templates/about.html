@@ -8,26 +8,32 @@ ABout, aboot
 
 <section id="about">
     <h3 class="mb-3">About</h3>
-    <p>stufasdkjfnalfkjdh</p>
 
-    <h5 class="my-3">Idea for the project</h5>
+    <h5 class="my-3">Motivation</h5>
     <p>
         The idea for the project came from the idea of filter bubbles--the phenomenon of only being presented with news and opinions that you already agree with, thanks to the modern reliance on social media and other recommendation systems to receive their news.
         In the past couple years people (in my filter bubble) have been discussing how...
     </p>
 
+    <h5 class="my-3">Sources</h5>
 
-    <h5 class="my-3">Technologies used</h5>
+
+    <h5 class="my-3">Methods</h5>
     <p>
         The backbone for this project is Latent Dirichlet Allocation--a method for extracting topics (as sets of words) from a corpus of text.
         To use this algorithm the corpus had to be preprocessed in a fashion that is very common in natural language processing tasks. I followed the following steps:
     </p>
-    <or>
+    <ul>
         <li>Use the spaCy library to tokenize and segment each doc into sentences</li>
-    </or>
+    </ul>
 
     <h5 class="my-3">Future work</h5>
 
-    <h5 class="my-3">About me</h5>
+    <h5 class="my-3">Contact me</h5>
 </section>
+{% endblock %}
+
+{% block additional_scripts %}
+<script src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ldavis.js') }}"></script>
 {% endblock %}

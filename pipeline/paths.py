@@ -42,3 +42,6 @@ class Paths:
 
     def output_file(self, file):
         return os.path.join(self.output_directory, file)
+
+    def ldaviz_json(self, n_topics):
+        return self.output_file('ldaviz.n{}.json'.format(str(int(n_topics))))

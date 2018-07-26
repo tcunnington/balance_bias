@@ -46,3 +46,6 @@ class LDAViz:
                 LDAvis_prepared = pickle.load(f)
 
         return LDAvis_prepared
+
+    def write_json_data(self, ldaviz_model, n_topics):
+        pyLDAvis.save_json(ldaviz_model, self.paths.ldaviz_json(n_topics))
