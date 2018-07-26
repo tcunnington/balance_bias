@@ -169,9 +169,9 @@ class LDABuilder:
         z = 1-np.dot(topics_matrix, topics)
         return np.argpartition(z, -n)[-n:]
 
-
-    def choose_topics_subset(self, lda_output, topn=5):
-        """
-        Give a subset of topics from LDA output.
-        """
-        return [x[0] for x in lda_output[:topn] if x[0] > 0.15]
+    #
+    # def choose_topics_subset(self, lda_output, topn=5):
+    #     """
+    #     Give a subset of topics from LDA output.
+    #     """
+    #     return [x[0] for x in lda_output[:topn] if x[0] > 0.15]

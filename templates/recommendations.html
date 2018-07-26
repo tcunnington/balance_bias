@@ -9,26 +9,29 @@ Contexter Results
 
 <section id="original-headline">
     <h3 class="mb-3">Article:</h3>
-    <img class="float-left mr-2" src="{{data.source_icon}}" alt="" height="80px" width="80px">
+    <div class="float-left mr-2 pb-4 bias-color {{data.bias_code}}">
+        <img class="" src="{{data.source_icon}}" alt="" height="80px" width="80px">
+    </div>
     <h5 class="px-2 mb-3">{{data.headline}}</h5>
     <p class="snippet">{{data.text_snippet}}</p>
     <div class="clearfix"></div>
 </section>
 
-<section id="topics">
-    <h5 class="my-3">Topics:</h5>
-    <p>
-    {% for topic in data.topics %}
-        <div>
-            <span class="badge badge-info text-dark border border-secondary">{{topic.id}}</span>
-            {{topic.words}}
-        </div>
-    {% endfor %}
-    </p>
+<section id="bias">
+    <h5 class="my-3">Bias: <span class="{{data.bias_code}}">{{data.bias_display}}</span></h5>
 </section>
 
-<section id="bias">
-    <h5 class="my-3">Bias: {{data.bias}}</h5>
+<section id="topics">
+    <h5 class="my-3">Topics:</h5>
+    <div>
+        {% for topic in data.topics %}
+        <div>
+        <span class="badge badge-info text-dark border border-secondary">{{topic.id}}</span>
+        {{", ".join(topic.words)}}
+        </div>
+        {% endfor %}
+    </div>
+
 </section>
 
 <section id="recommendations">
@@ -43,8 +46,8 @@ Contexter Results
         {% for r in data.recommendations %}
         <div class="row py-2 px-1 border-bottom">
             <div class="col-10">
-                <a class="" href="{{r.url}}">{{r.title}}</a>
-                <p class="">
+                <a class="recommended-url" href="{{r.url}}">{{r.title}}</a>
+                <p>
                     {{r.partial_content}}
                 </p>
             </div>
@@ -58,9 +61,6 @@ Contexter Results
         </div>
         {% endfor %}
     </div>
-
-
-
 
 </section>
 

@@ -61,11 +61,10 @@ def recommendations():
         parsed_doc = prep.process_doc(text)
 
     bow = trigram_dictionary.doc2bow(parsed_doc)
-    doc_topics = lda[bow]
+    doc_topics = lda.get_document_topics(bow, minimum_probability=0.05)
 
     # topics display names
-    topic_ids = lda_builder.choose_topics_subset(doc_topics)
-    topics = [{'id': tid, 'words':lda.print_topic(tid, 5)} for tid in topic_ids] # TODO
+    topics = [{'id': tid, 'words':[w for w,pw in lda.show_topic(tid, 5)]} for tid,p in doc_topics] # TODO
 
     # alterate recommendations
     sims = similarity_index[doc_topics]
@@ -93,7 +92,8 @@ def recommendations():
         'headline': title,
         'text_snippet': text[:400] + '...',
         'topics': topics,
-        'bias': bias_display,
+        'bias_display': bias_display,
+        'bias_code': bias_code,
         'recommendations': rec_page.build_recommendations_list(rdf, fields, n_stories)
     }
     return render_template('recommendations.html', data=render_data)
