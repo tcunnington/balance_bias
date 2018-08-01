@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from pipeline.preprocessing import Preprocessor
 from pipeline.lda import LDABuilder
+from pipeline.lsa import LSABuilder
 from pipeline.corpus import Corpus
 from article_scraper import ArticleScraper
 from newspaper.article import ArticleException
@@ -24,6 +25,7 @@ n_chunk = 200
 prep = Preprocessor(source, preload_models=True)
 lda_builder = LDABuilder(source)
 lda = lda_builder.get_lda_model(n_topics, from_scratch=False)
+lsa = LSABuilder(source, lda_builder)
 trigram_dictionary = lda_builder.get_corpus_dict(from_scratch=False)
 similarity_index = lda_builder.get_similarity_index(trigram_dictionary, lda, from_scratch=False)
 
@@ -84,7 +86,7 @@ def recommendations():
     # Bias filtering
     bias_filter = rec_page.resolve_valid_biases(bias_code)
     rdf = rec_page.append_bias(rdf)
-    rdf = rdf[rdf['bias'].isin(bias_filter)]
+    rdf = rdf[rdf['bias'].isin(bias_filter)] # add title includes words from top topics
     fields = ['title', 'publication', 'url', 'partial_content', 'bias', 'bias_label','icon_url']
 
     render_data = {

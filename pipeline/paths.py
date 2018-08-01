@@ -48,3 +48,6 @@ class Paths:
 
     def get_lsa_filepath(self, n_topics):
         return os.path.join(self.intermediate_directory, 'lsa.n' + str(int(n_topics)) + '.model')
+
+    def get_lsa_index(self, n_topics): # TODO merge to create general index path function
+        return os.path.join(self.intermediate_directory, 'similarity_lsa.n' + str(int(n_topics)))

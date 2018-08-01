@@ -42,3 +42,20 @@ class LSABuilder:
             lsi = LsiModel.load(filepath)
 
         return lsi
+
+    # TODO move to general function
+    def get_similarity_index(self, bow_corpus, lsa: LsiModel, recalculate=False, from_scratch=True):
+
+        filepath = self.paths.get_lsa_index(lsa.num_topics)
+
+        if not os.path.isfile(filepath) or recalculate:
+
+            if not from_scratch:
+                raise ValueError('No similarity index file exists but from_scratch is False')
+
+            index = MatrixSimilarity(lsa[bow_corpus])
+            index.save(filepath)
+        else:
+            index = MatrixSimilarity.load(filepath)
+
+        return index
