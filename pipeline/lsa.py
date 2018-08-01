@@ -17,7 +17,7 @@ class LSABuilder:
 
     def pipeline(self, n_topics=50):
         print('Running LDA pipeline (source: {})'.format(self.paths.subdir))
-        self.lda_builder.get_lsa_model(n_topics, recalculate=True)
+        self.get_lsa_model(n_topics, recalculate=True)
         print('Done Done!')
 
     def get_lsa_model(self, n_topics=50, recalculate=False, from_scratch=True):
