@@ -13,15 +13,24 @@ source_name = 'all_the_news'
 # pp.run_pipeline()
 
 # LDA model uses trigram corpus by default
-n_topics = 75
-ldab = LDABuilder(source_name)
-lda = ldab.get_lda_model(n_topics=n_topics)
 # ldab.lda_pipeline()
-
+# n_topics = 100
+ldab = LDABuilder(source_name)
 trigram_dictionary = ldab.get_corpus_dict(from_scratch=False)
 bow_corpus = ldab.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
-ldab.get_similarity_index(bow_corpus, lda)
+# lda = ldab.get_lda_model(n_topics=n_topics)
+# ldab.get_similarity_index(bow_corpus, lda)
+
+# n_topics = 50
+# lda = ldab.get_lda_model(n_topics=n_topics)
+# ldab.get_similarity_index(bow_corpus, lda)
 
 # LDA Viz
-# lda_viz = LDAViz(ldab)
+# n_topics = 100
+lda_viz = LDAViz(ldab)
 # lda_viz.viz_pipeline(n_topics, 'ldaviz_{}.html'.format(n_topics))
+for n_topics in [50,75,100]:
+	print('writing data for n_topics: {}'.format(n_topics) )
+	lda = ldab.get_lda_model(n_topics=n_topics)
+	ldaviz_model = lda_viz.get_ldaviz_model(lda, bow_corpus, trigram_dictionary)
+	lda_viz.write_json_data(ldaviz_model, n_topics)
