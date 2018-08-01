@@ -23,9 +23,9 @@ class Preprocessor():
 
         # add sentence segmentation since we removed the parser
         # note: this is a different segmentation, but doesn't seem to be problematic
-        type(nlp)
+        # type(nlp)
         nlp.add_pipe(nlp.create_pipe('sentencizer'))
-        print(nlp.pipe_names)
+        # print(nlp.pipe_names)
         self.nlp = nlp
 
         if preload_models:

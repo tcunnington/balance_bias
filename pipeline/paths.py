@@ -45,3 +45,6 @@ class Paths:
 
     def ldaviz_json(self, n_topics):
         return self.output_file('ldaviz.n{}.json'.format(str(int(n_topics))))
+
+    def get_lsa_filepath(self, n_topics):
+        return os.path.join(self.intermediate_directory, 'lsa.n' + str(int(n_topics)) + '.model')

@@ -1,12 +1,10 @@
 import os
-import numpy as np
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.word2vec import LineSentence
 from gensim.similarities import MatrixSimilarity
 
 from pipeline.paths import Paths
-from pipeline.utils import *
 
 class LDABuilder:
 
@@ -95,44 +93,44 @@ class LDABuilder:
         return lda
 
 
-    def get_corpus_topics_matrix(self, n_topics=50, recalculate=False, from_scratch=True):
-
-        filepath = self.paths.get_topics_matrix_filepath(n_topics)
-
-        if not os.path.isfile(filepath) or recalculate:
-
-            if not from_scratch:
-                raise ValueError('No topics matrix file exists but from_scratch is False')
-
-            lda = self.get_lda_model(n_topics)
-            num_topics = lda.num_topics
-
-            trigram_dictionary = self.get_corpus_dict()
-            vecs = []
-
-            for parsed_doc in read_doc_by_line(self.paths.trigram_corpus_filepath):
-                # doc is already parsed so just needs to remove stopwords and get tokens as list, then to bow
-                bow = trigram_dictionary.doc2bow(get_doc_tokens(parsed_doc))
-
-                # topics come in list of (topic#, weight)
-                topics = lda[bow]
-                topic_vec = self.create_topic_vec(num_topics, topics)
-                vecs.append(topic_vec)
-
-                if len(topics) == 0:
-                    print('No good article: ' + parsed_doc)
-
-            matrix = np.vstack(vecs)
-            row_sums = np.linalg.norm(matrix, axis=1, keepdims=True)
-            matrix = matrix / row_sums
-
-            np.save(filepath, matrix)
-            print('Topics matrix (n_topics={}) written to {}'.format(n_topics, filepath))
-        else:
-            print('Loading topics matrix (n_topics={})...'.format(n_topics))
-            matrix = np.load(filepath)
-
-        return matrix
+    # def get_corpus_topics_matrix(self, n_topics=50, recalculate=False, from_scratch=True):
+    #
+    #     filepath = self.paths.get_topics_matrix_filepath(n_topics)
+    #
+    #     if not os.path.isfile(filepath) or recalculate:
+    #
+    #         if not from_scratch:
+    #             raise ValueError('No topics matrix file exists but from_scratch is False')
+    #
+    #         lda = self.get_lda_model(n_topics)
+    #         num_topics = lda.num_topics
+    #
+    #         trigram_dictionary = self.get_corpus_dict()
+    #         vecs = []
+    #
+    #         for parsed_doc in read_doc_by_line(self.paths.trigram_corpus_filepath):
+    #             # doc is already parsed so just needs to remove stopwords and get tokens as list, then to bow
+    #             bow = trigram_dictionary.doc2bow(get_doc_tokens(parsed_doc))
+    #
+    #             # topics come in list of (topic#, weight)
+    #             topics = lda[bow]
+    #             topic_vec = self.create_topic_vec(num_topics, topics)
+    #             vecs.append(topic_vec)
+    #
+    #             if len(topics) == 0:
+    #                 print('No good article: ' + parsed_doc)
+    #
+    #         matrix = np.vstack(vecs)
+    #         row_sums = np.linalg.norm(matrix, axis=1, keepdims=True)
+    #         matrix = matrix / row_sums
+    #
+    #         np.save(filepath, matrix)
+    #         print('Topics matrix (n_topics={}) written to {}'.format(n_topics, filepath))
+    #     else:
+    #         print('Loading topics matrix (n_topics={})...'.format(n_topics))
+    #         matrix = np.load(filepath)
+    #
+    #     return matrix
 
     def get_similarity_index(self, bow_corpus, lda, recalculate=False, from_scratch=True):
 
@@ -150,24 +148,24 @@ class LDABuilder:
 
         return index
 
-    @staticmethod
-    def create_topic_vec(num_topics, topics):
+    # @staticmethod
+    # def create_topic_vec(num_topics, topics):
+    #
+    #     topic_vec = np.zeros(num_topics)
+    #     if len(topics) == 0:
+    #         print('No topics found, which is strange and should not happen for a real news article.')
+    #         return topic_vec
+    #
+    #     [idxs, weights] = list(zip(*topics))
+    #     np.put(topic_vec, idxs, weights)
+    #     return topic_vec
 
-        topic_vec = np.zeros(num_topics)
-        if len(topics) == 0:
-            print('No topics found, which is strange and should not happen for a real news article.')
-            return topic_vec
 
-        [idxs, weights] = list(zip(*topics))
-        np.put(topic_vec, idxs, weights)
-        return topic_vec
-
-
-    def cosine_similarity_corpus(self, topics, topics_matrix, n=10):
-        topics = topics / np.linalg.norm(topics)
-        # corpus topic vectors should already be normalized
-        z = 1-np.dot(topics_matrix, topics)
-        return np.argpartition(z, -n)[-n:]
+    # def cosine_similarity_corpus(self, topics, topics_matrix, n=10):
+    #     topics = topics / np.linalg.norm(topics)
+    #     # corpus topic vectors should already be normalized
+    #     z = 1-np.dot(topics_matrix, topics)
+    #     return np.argpartition(z, -n)[-n:]
 
     #
     # def choose_topics_subset(self, lda_output, topn=5):
