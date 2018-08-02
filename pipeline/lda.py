@@ -141,9 +141,11 @@ class LDABuilder:
             if not from_scratch:
                 raise ValueError('No similarity index file exists but from_scratch is False')
 
+            print('Building index...')
             index = MatrixSimilarity(lda[bow_corpus])
             index.save(filepath)
         else:
+            print('Loading index...')
             index = MatrixSimilarity.load(filepath)
 
         return index

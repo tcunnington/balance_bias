@@ -18,16 +18,19 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 source = 'all_the_news'
 n_topics = 100
 n_stories = 10
-n_chunk = 200
-
+n_chunk = 500
+is_lsa = False
 
 #### Objects needed in memory for recommendations ####
 prep = Preprocessor(source, preload_models=True)
 lda_builder = LDABuilder(source)
 lda = lda_builder.get_lda_model(n_topics, from_scratch=False)
-lsa = LSABuilder(source, lda_builder)
 trigram_dictionary = lda_builder.get_corpus_dict(from_scratch=False)
+# LSA
+lsa_builder = LSABuilder(source, lda_builder)
+lsa = lsa_builder.get_lsa_model(n_topics, from_scratch=False)
 similarity_index = lda_builder.get_similarity_index(trigram_dictionary, lda, from_scratch=False)
+lsa_index = lsa_builder.get_similarity_index(trigram_dictionary, lsa, from_scratch=False)
 
 corpus = Corpus(source)
 rec_page = RecommendationPage(app)
@@ -63,15 +66,19 @@ def recommendations():
         parsed_doc = prep.process_doc(text)
 
     bow = trigram_dictionary.doc2bow(parsed_doc)
-    doc_topics = lda.get_document_topics(bow, minimum_probability=0.05)
 
-    # topics display names
-    topics = [{'id': tid, 'words':[w for w,pw in lda.show_topic(tid, 5)]} for tid,p in doc_topics] # TODO
+    if is_lsa:
+        lsa_vec = lsa[bow]
+        topics = []
+        sims = lsa_index[lsa_vec]
+        sims = sorted(enumerate(sims), key=lambda item: -item[1])[:n_chunk]
+    else:
+        doc_topics = lda.get_document_topics(bow, minimum_probability=0.05)
+        topics = [{'id': tid, 'words':[w for w,pw in lda.show_topic(tid, 5)]} for tid,p in doc_topics] # TODO
+        sims = similarity_index[doc_topics]
+        # sort by cos distance and take top chunk since there's no reason to carry them all around.
+        sims = sorted(enumerate(sims), key=lambda item: -item[1])[:n_chunk]
 
-    # alterate recommendations
-    sims = similarity_index[doc_topics]
-    # sort by cos distance and take top chunk since there's no reason to carry them all around.
-    sims = sorted(enumerate(sims), key=lambda item: -item[1])[:n_chunk]
     [idxs, cos_scores] = list(zip(*sims))
 
     # get display info from meta data

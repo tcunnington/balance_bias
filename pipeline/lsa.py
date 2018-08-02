@@ -16,7 +16,7 @@ class LSABuilder:
 
 
     def pipeline(self, n_topics=50):
-        print('Running LDA pipeline (source: {})'.format(self.paths.subdir))
+        print('Running LSA pipeline (source: {})'.format(self.paths.subdir))
         self.get_lsa_model(n_topics, recalculate=True)
         print('Done Done!')
 
@@ -36,9 +36,9 @@ class LSABuilder:
             lsi = LsiModel(trigram_bow_corpus, id2word=trigram_dictionary, num_topics=n_topics)
 
             lsi.save(filepath)
-            print('LDA model (n_topics={}) written to {}'.format(n_topics, filepath))
+            print('LSA model (n_topics={}) written to {}'.format(n_topics, filepath))
         else:
-            print('Loading LDA model (n_topics={})...'.format(n_topics))
+            print('Loading LSA model (n_topics={})...'.format(n_topics))
             lsi = LsiModel.load(filepath)
 
         return lsi
@@ -53,9 +53,11 @@ class LSABuilder:
             if not from_scratch:
                 raise ValueError('No similarity index file exists but from_scratch is False')
 
+            print('Building index...')
             index = MatrixSimilarity(lsa[bow_corpus])
             index.save(filepath)
         else:
+            print('Loading index...')
             index = MatrixSimilarity.load(filepath)
 
         return index
