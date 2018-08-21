@@ -57,7 +57,9 @@ class RecommendationPage:
 
     def resolve_img_url(self, source_id):
         jpg = 'imgs/{}.jpg'.format(source_id)
+        # png = 'imgs/{}.png'.format(source_id)
         jpg_file = url_for('static', filename=jpg)
+
         return jpg_file
 
         # TODO support png or whatever if that's what we have

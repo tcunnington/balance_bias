@@ -69,7 +69,11 @@ class Sources:
 
     @staticmethod
     def resolve_source_id(source_name):
-        return source_name.lower().replace(' ', '-')
+        x = source_name.lower().split()
+        if x[0] == 'the':
+            x = x[1:]
+
+        return '-'.join(x)
 
 
 if __name__ == '__main__':

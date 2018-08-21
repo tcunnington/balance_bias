@@ -31,6 +31,6 @@ lda_viz = LDAViz(ldab)
 # lda_viz.viz_pipeline(n_topics, 'ldaviz_{}.html'.format(n_topics))
 for n_topics in [50,75,100]:
 	print('writing data for n_topics: {}'.format(n_topics) )
-	lda = ldab.get_lda_model(n_topics=n_topics)
+	lda = ldab.get_model(n_topics=n_topics)
 	ldaviz_model = lda_viz.get_ldaviz_model(lda, bow_corpus, trigram_dictionary)
 	lda_viz.write_json_data(ldaviz_model, n_topics)

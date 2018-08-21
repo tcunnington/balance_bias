@@ -23,7 +23,7 @@ class LDAViz:
 
         trigram_dictionary = self.lda_builder.get_corpus_dict(from_scratch=False)
         bow = self.lda_builder.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
-        lda = self.lda_builder.get_lda_model(n_topics=n_topics, from_scratch=False)
+        lda = self.lda_builder.get_model(n_topics=n_topics, from_scratch=False)
         ldaviz_prepared = self.get_ldaviz_model(lda, bow, trigram_dictionary, recalculate=recalculate)
         out_path = self.paths.output_file(html_filename)
         pyLDAvis.save_html(ldaviz_prepared, out_path)

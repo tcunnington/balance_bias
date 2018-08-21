@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from pipeline.preprocessing import Preprocessor
 from pipeline.lda import LDABuilder
 from pipeline.lsa import LSABuilder
+from pipeline.lsa_similarity import LSASimilarity
+from pipeline.lda_similarity import LDASimilarity
 from pipeline.corpus import Corpus
 from article_scraper import ArticleScraper
 from newspaper.article import ArticleException
@@ -23,17 +25,17 @@ is_lsa = False
 
 #### Objects needed in memory for recommendations ####
 prep = Preprocessor(source, preload_models=True)
-lda_builder = LDABuilder(source)
-lda = lda_builder.get_lda_model(n_topics, from_scratch=False)
-trigram_dictionary = lda_builder.get_corpus_dict(from_scratch=False)
-# LSA
-lsa_builder = LSABuilder(source, lda_builder)
-lsa = lsa_builder.get_lsa_model(n_topics, from_scratch=False)
-similarity_index = lda_builder.get_similarity_index(trigram_dictionary, lda, from_scratch=False)
-lsa_index = lsa_builder.get_similarity_index(trigram_dictionary, lsa, from_scratch=False)
-
 corpus = Corpus(source)
 rec_page = RecommendationPage(app)
+
+lda_builder = LDABuilder(source)
+trigram_dictionary = lda_builder.get_corpus_dict(from_scratch=False)
+
+if is_lsa:
+    lsa_builder = LSABuilder(source, lda_builder)
+    similarity_model = LSASimilarity(lsa_builder, n_topics, trigram_dictionary)
+else:
+    similarity_model = LDASimilarity(lda_builder, n_topics, trigram_dictionary)
 
 @app.route('/')
 def index():
@@ -66,24 +68,14 @@ def recommendations():
         parsed_doc = prep.process_doc(text)
 
     bow = trigram_dictionary.doc2bow(parsed_doc)
-
-    if is_lsa:
-        lsa_vec = lsa[bow]
-        topics = []
-        sims = lsa_index[lsa_vec]
-        sims = sorted(enumerate(sims), key=lambda item: -item[1])[:n_chunk]
-    else:
-        doc_topics = lda.get_document_topics(bow, minimum_probability=0.05)
-        topics = [{'id': tid, 'words':[w for w,pw in lda.show_topic(tid, 5)]} for tid,p in doc_topics] # TODO
-        sims = similarity_index[doc_topics]
-        # sort by cos distance and take top chunk since there's no reason to carry them all around.
-        sims = sorted(enumerate(sims), key=lambda item: -item[1])[:n_chunk]
+    sims, topics = similarity_model.get_similarity_to_doc(bow)
 
     [idxs, cos_scores] = list(zip(*sims))
 
     # get display info from meta data
     rdf = corpus.meta_data.loc[list(idxs)]
 
+    # display logic
     source_name = rec_page.resolve_source_name(url)
     source_id = rec_page.resolve_source_id(source_name)
     source_icon = rec_page.resolve_img_url(source_id)
