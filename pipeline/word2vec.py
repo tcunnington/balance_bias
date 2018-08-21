@@ -4,7 +4,7 @@ from gensim.models.word2vec import LineSentence
 
 from pipeline.paths import Paths
 
-paths = Paths('all_the_news')
+paths = Paths()
 
 def get_word2vec_model(recalculate=False, n_epochs=11):
 

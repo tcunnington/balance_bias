@@ -12,7 +12,7 @@ class Preprocessor():
     """
 
     def __init__(self, source_name, spacy_model='en', preload_models=False): # OR en_core_web_md OR en_core_web_lg
-        self.paths = Paths(source_name)
+        self.paths = Paths()
         print('load spacy model')
         if isinstance(spacy_model,str):
             nlp = spacy.load(spacy_model, disable=['ner', 'parser'])

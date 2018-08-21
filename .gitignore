@@ -1,6 +1,7 @@
 # Project specific files/dirs
 data/
 intermediate/
+models/
 tmp/
 .idea/
 ._*

@@ -1,6 +1,7 @@
 from pipeline.similarity_model import SimilarityModel
 from pipeline.lda import LDABuilder
 from gensim.matutils import kullback_leibler, jaccard, hellinger
+import heapq
 
 class LDASimilarity(SimilarityModel):
 
@@ -16,8 +17,6 @@ class LDASimilarity(SimilarityModel):
         # sort by cos distance and take top chunk since there's no reason to carry them all around.
         return sorted(enumerate(sims), key=lambda item: -item[1])[:ntop], topics
 
-    def hellinger_distance(self, doc_bow, trigram_dictionary):
-        corpus = self.model.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
-        heap = []
-        for document in corpus:
-            print(hellinger(doc_bow, document))
+    def hellinger_distance(self, doc_bow, bow_corpus):
+        scores = [(i, hellinger(doc_bow, document))for i,document in enumerate(bow_corpus)]
+        return heapq.nsmallest(100, scores, lambda x: x[1])

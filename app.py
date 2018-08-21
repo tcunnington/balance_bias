@@ -58,7 +58,7 @@ def recommendations():
     if url != '':
         try:
             title, text = ArticleScraper.scrape(url)
-            parsed_doc = prep.process_doc(text)
+            parsed_doc = prep.process_doc(title + ' ' + text)
         except ArticleException as e:
             # If the download for some reason fails (ex. 404) we need to show an error msg and redirect to main
             print('SCRAPING FAILED!')
@@ -69,6 +69,8 @@ def recommendations():
 
     bow = trigram_dictionary.doc2bow(parsed_doc)
     sims, topics = similarity_model.get_similarity_to_doc(bow)
+
+    # similarity_model.hellinger_distance(bow, lda_builder.get_trigram_bow_corpus(trigram_dictionary))
 
     [idxs, cos_scores] = list(zip(*sims))
 

@@ -5,7 +5,7 @@ class Corpus:
 
     def __init__(self, source_name):
         # get meta data
-        self.paths = Paths(source_name)
+        self.paths = Paths()
         self.meta_data = pd.read_csv(self.paths.corpus_meta_data)
 
 

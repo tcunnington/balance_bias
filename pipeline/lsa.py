@@ -10,7 +10,7 @@ from pipeline.paths import Paths
 class LSABuilder:
 
     def __init__(self, source_name, lda_builder):
-        self.paths = Paths(source_name)
+        self.paths = Paths()
         # piggyback off lda builder for now...
         self.lda_builder = lda_builder
 

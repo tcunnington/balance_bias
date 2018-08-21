@@ -6,7 +6,7 @@ import spacy
 import os
 import fnmatch
 
-paths = Paths('all_the_news')
+paths = Paths()
 
 nlp = spacy.load('en')
 file_name = 'articles*'

@@ -10,7 +10,7 @@ from pipeline.paths import Paths
 class LDABuilder:
 
     def __init__(self, source_name):
-        self.paths = Paths(source_name)
+        self.paths = Paths()
 
     def lda_pipeline(self, n_topics=50):
         print('Running LDA pipeline (source: {})'.format(self.paths.subdir))
