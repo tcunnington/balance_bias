@@ -18,7 +18,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 #### PARAMS ####
 source = 'all_the_news'
-n_topics = 100
+n_topics = 1000
 n_stories = 10
 n_chunk = 500
 is_lsa = False
@@ -69,7 +69,6 @@ def recommendations():
 
     bow = trigram_dictionary.doc2bow(parsed_doc)
     sims, topics = similarity_model.get_similarity_to_doc(bow)
-
     # similarity_model.hellinger_distance(bow, lda_builder.get_trigram_bow_corpus(trigram_dictionary))
 
     [idxs, cos_scores] = list(zip(*sims))
@@ -104,7 +103,7 @@ def recommendations():
 
 
 if __name__ == '__main__':
-  app.run(port=33507)
+  app.run(host='0.0.0.0', port=33507)
 
 
 # Postgres:
