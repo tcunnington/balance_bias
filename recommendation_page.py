@@ -44,9 +44,9 @@ class RecommendationPage:
         extreme = biases[0:1] + biases[-1:]
 
         if input_bias in left:
-            valid = right
+            valid = right + [biases[3]]
         elif input_bias in right:
-            valid = left
+            valid = left + [biases[3]]
         else: # source is relatively unbiased- hit em with the crazy
             valid = extreme
 
