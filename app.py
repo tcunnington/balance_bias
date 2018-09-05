@@ -28,7 +28,7 @@ prep = Preprocessor(source, preload_models=True)
 corpus = Corpus(source)
 rec_page = RecommendationPage(app)
 
-lda_builder = LDABuilder(source)
+lda_builder = LDABuilder()
 trigram_dictionary = lda_builder.get_corpus_dict(from_scratch=False)
 
 if is_lsa:

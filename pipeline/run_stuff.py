@@ -16,7 +16,7 @@ source_name = 'all_the_news'
 # LDA model uses trigram corpus by default
 # ldab.lda_pipeline()
 n_topics = 2000
-ldab = LDABuilder(source_name)
+ldab = LDABuilder()
 trigram_dictionary = ldab.get_corpus_dict(from_scratch=False)
 bow_corpus = ldab.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
 # lda = ldab.get_lda_model(n_topics=n_topics, n_workers=2)

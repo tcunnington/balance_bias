@@ -9,7 +9,7 @@ from pipeline.paths import Paths
 
 class LDABuilder:
 
-    def __init__(self, source_name):
+    def __init__(self):
         self.paths = Paths()
 
     def lda_pipeline(self, n_topics=50):
