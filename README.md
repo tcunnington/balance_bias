@@ -28,5 +28,5 @@ After identifying phrases up to trigrams I used Gensim's LDAMulticore class to b
 
 ## Future
 
-An improved bias model is the main direction for future work. Right now the bias is based on the publication it came from, where values where hand picked to conform to this source: 
+An improved bias model is the main direction for future work. Right now the bias is based on the publication it came from, where values where hand picked to conform to this source: https://www.adfontesmedia.com/the-chart-version-3-0-what-exactly-are-we-reading/ 
 I will either hand label by data (again by source) to train a new model, or else use an existing data set. Data sets for building fake news detectors look promising.
