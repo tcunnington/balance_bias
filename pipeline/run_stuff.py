@@ -15,7 +15,7 @@ source_name = 'all_the_news'
 
 # LDA model uses trigram corpus by default
 # ldab.lda_pipeline()
-n_topics = 2000
+n_topics = 200
 ldab = LDABuilder()
 trigram_dictionary = ldab.get_corpus_dict(from_scratch=False)
 bow_corpus = ldab.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
@@ -24,13 +24,13 @@ bow_corpus = ldab.get_trigram_bow_corpus(trigram_dictionary, from_scratch=False)
 
 # print('DONE OK NOW DO LSA')
 # n_topics = 50
-# lda = ldab.get_lda_model(n_topics=n_topics)
-# ldab.get_similarity_index(bow_corpus, lda)
+lda = ldab.get_model(n_topics=n_topics)
+ldab.get_similarity_index(bow_corpus, lda)
 
-lsa_builder = LSABuilder(source_name, ldab)
+# lsa_builder = LSABuilder(source_name, ldab)
 # lsa50 = lsa_builder.get_lsa_model(75)
-lsa = lsa_builder.get_lsa_model(n_topics)
-lsa_builder.get_similarity_index(bow_corpus, lsa)
+# lsa = lsa_builder.get_lsa_model(n_topics)
+# lsa_builder.get_similarity_index(bow_corpus, lsa)
 
 # LDA Viz
 # n_topics = 100

@@ -3,6 +3,8 @@ from flask import url_for
 from urllib.parse import urlparse
 from sources import Sources
 
+flatten = lambda l: [item for sublist in l for item in sublist] # TODO
+
 class RecommendationPage:
 
     def __init__(self, app):
@@ -16,26 +18,30 @@ class RecommendationPage:
     def resolve_source_id(self, name):
         return self.sources.resolve_source_id(name)
 
-    def resolve_bias_display(self, source_name):
-        bias = self.sources.sources_bias_map[source_name]
+    def resolve_bias_display(self, source_code):
+        bias = self.sources.sources_bias_map[source_code]
         return self.sources.bias_display_names[bias]
 
     def build_recommendations_list(self, df, subset, top_n):
-        df = df[subset].head(top_n)
+        df = df.head(top_n)
 
         return [row.to_dict() for i, row in df.iterrows()]
 
-    def append_bias(self, df):
+    def append_bias(self, rec_df):
+        """
+        For diplaying the bias information for each recommended article
+        """
         bias_map = self.sources.sources_bias_map
-        df['icon_url'] = df['publication'].map(lambda x: self.resolve_img_url(self.resolve_source_id(x)))
-        bias = df['publication'].map(lambda x: bias_map.get(x, bias_map.get('The ' + x, bias_map.get(x + ' News'))))
-        df['bias'] = bias
-        df['bias_label'] = bias.map(lambda b: self.sources.bias_display_names.get(b))
-        df['bias_score'] = bias.map(lambda b: self.sources.bias_score.get(b))
-        return df
+        rec_df['publication'] = rec_df['source'].map(lambda x: x['name'])
+        rec_df['bias_code'] = rec_df['source'].map(lambda x: (bias_map.get(x['id'])))
+        rec_df['icon_url'] = rec_df['source'].map(lambda x: self.resolve_img_url(x['id']))
+        # bias = rec_df['publication'].map(lambda x: bias_map.get(x, bias_map.get('The ' + x, bias_map.get(x + ' News'))))
+        rec_df['bias_label'] = rec_df['bias_code'].map(lambda b: self.sources.bias_display_names.get(b))
+        # df['bias_score'] = bias.map(lambda b: self.sources.bias_score.get(b))
+        return rec_df
 
-    def resolve_bias_code(self, source_name):
-        return self.sources.sources_bias_map[source_name]
+    def resolve_bias_code(self, source_code):
+        return self.sources.sources_bias_map[source_code]
 
     def resolve_valid_biases(self, input_bias):
         biases = list(self.sources.bias_sources_map.keys())
@@ -53,7 +59,7 @@ class RecommendationPage:
         if input_bias in extreme:
             valid.append(biases[3]) # append center
 
-        return valid + [None] # include None case for if no bias was determined
+        return valid# + [None] # include None case for if no bias was determined
 
     def resolve_img_url(self, source_id):
         jpg = 'imgs/{}.jpg'.format(source_id)
@@ -69,6 +75,9 @@ class RecommendationPage:
         # else:
         #     print('going with file:', url_for('static', filename=png))
         #     return url_for('static', filename=png)
+
+    def get_valid_sources(self, valid_biases):
+        return flatten([self.sources.bias_source_id_map[b] for b in valid_biases])
 
 if __name__ == "__main__":
     rec = RecommendationPage()

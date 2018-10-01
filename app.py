@@ -8,10 +8,13 @@ from pipeline.corpus import Corpus
 from article_scraper import ArticleScraper
 from newspaper.article import ArticleException
 
+from news_api import NewsAPI
+
 from recommendation_page import RecommendationPage
 
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
+# os.getenv('NEWS_API_KEY')
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -24,8 +27,8 @@ n_chunk = 500
 is_lsa = False
 
 #### Objects needed in memory for recommendations ####
-prep = Preprocessor(source, preload_models=True)
-corpus = Corpus(source)
+prep = Preprocessor(preload_models=True)
+corpus = Corpus()
 rec_page = RecommendationPage(app)
 
 lda_builder = LDABuilder()
@@ -35,7 +38,9 @@ if is_lsa:
     lsa_builder = LSABuilder(source, lda_builder)
     similarity_model = LSASimilarity(lsa_builder, n_topics, trigram_dictionary)
 else:
-    similarity_model = LDASimilarity(lda_builder, n_topics, trigram_dictionary)
+    similarity_model = LDASimilarity(lda_builder, n_topics, trigram_dictionary) # TODO just use LDA
+
+news_api = NewsAPI(similarity_model.model)
 
 @app.route('/')
 def index():
@@ -68,35 +73,44 @@ def recommendations():
         parsed_doc = prep.process_doc(text)
 
     bow = trigram_dictionary.doc2bow(parsed_doc)
-    sims, topics = similarity_model.get_similarity_to_doc(bow)
+    # sims, topics = similarity_model.get_similarity_to_doc(bow)
+
     # similarity_model.hellinger_distance(bow, lda_builder.get_trigram_bow_corpus(trigram_dictionary))
 
-    [idxs, cos_scores] = list(zip(*sims))
+    # [idxs, cos_scores] = list(zip(*sims))
 
-    # get display info from meta data
-    rdf = corpus.meta_data.loc[list(idxs)]
+    # TODO move it all to rec page -> just return the display data
 
-    # display logic
+    # find source and get valid biases
     source_name = rec_page.resolve_source_name(url)
     source_id = rec_page.resolve_source_id(source_name)
-    source_icon = rec_page.resolve_img_url(source_id)
-    bias_code = rec_page.resolve_bias_code(source_name)
-    bias_display = rec_page.resolve_bias_display(source_name)
+    bias_code = rec_page.resolve_bias_code(source_id)
+    valid_biases = rec_page.resolve_valid_biases(bias_code)
+    print(bias_code, valid_biases)
+
+    # make query
+    doc_topics = sorted(similarity_model.model.get_document_topics(bow, minimum_probability=0.05), key=lambda x: -x[1])
+    topics = [{'id': tid, 'words': [w for w, pw in similarity_model.model.show_topic(tid, 5)]} for tid, p in doc_topics]
+    valid_sources = rec_page.get_valid_sources(valid_biases)
+    print(valid_sources)
+    rdf = news_api.query(doc_topics, valid_sources, parsed_doc)
+
+    # get display info from meta data
+    # rdf = corpus.meta_data.loc[list(idxs)]
 
     # Bias filtering
-    bias_filter = rec_page.resolve_valid_biases(bias_code)
     rdf = rec_page.append_bias(rdf)
-    rdf = rdf[rdf['bias'].isin(bias_filter)] # add title includes words from top topics
-    fields = ['title', 'publication', 'url', 'partial_content', 'bias', 'bias_label','icon_url']
+    # rdf = rdf[rdf['bias'].isin(valid_biases)] # add title includes words from top topics
+    # fields = ['title', 'publication', 'url', 'description', 'bias_c', 'bias_label','icon_url']
 
     render_data = {
-        'source_icon': source_icon,
+        'source_icon': rec_page.resolve_img_url(source_id),
         'headline': title,
         'text_snippet': text[:400] + '...',
         'topics': topics,
-        'bias_display': bias_display,
+        'bias_display': rec_page.resolve_bias_display(source_id),
         'bias_code': bias_code,
-        'recommendations': rec_page.build_recommendations_list(rdf, fields, n_stories)
+        'recommendations': rec_page.build_recommendations_list(rdf, [], n_stories)
     }
     return render_template('recommendations.html', data=render_data)
 
