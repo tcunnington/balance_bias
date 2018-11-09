@@ -30,18 +30,8 @@ def add_newline(itr):
     for item in itr:
         yield item + '\n'
 
-def prep_whitespace(text):
-    return re.sub(r'\s+', ' ', text).strip() # .replace('\n', '\\n') # instead of simply removing all newlines..
-
 def get_doc_tokens(parsed_doc):
     return [term for term in parsed_doc if term not in STOPWORDS]
-
-#################################################
-#
-#     Misc  / spaCy
-#
-#################################################
-
 
 def is_punct_space(token):
     """
@@ -62,3 +52,4 @@ def lemmatize_clean(spacy_itr):
     generator to act on a spaCy object that allows iterating over tokens
     """
     return (token.lemma_ for token in spacy_itr if not is_punct_space(token))
+

@@ -1,5 +1,4 @@
 import pandas as pd
-from utils import *
 from paths import Paths
 import spacy
 
@@ -10,6 +9,9 @@ paths = Paths()
 
 nlp = spacy.load('en')
 file_name = 'articles*'
+
+def prep_whitespace(text):
+    return re.sub(r'\s+', ' ', text).strip() # .replace('\n', '\\n') # instead of simply removing all newlines..
 
 def story_content(file_pattern):
 

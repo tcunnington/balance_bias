@@ -1,15 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from pipeline.preprocessing import Preprocessor
 from pipeline.lda import LDABuilder
-from pipeline.lsa import LSABuilder
-from pipeline.lsa_similarity import LSASimilarity
-from pipeline.lda_similarity import LDASimilarity
-from pipeline.corpus import Corpus
+# from pipeline.lda_similarity import LDASimilarity
+# from pipeline.corpus import Corpus
 from article_scraper import ArticleScraper
 from newspaper.article import ArticleException
 
 from news_api import NewsAPI
-
 from recommendation_page import RecommendationPage
 
 from dotenv import load_dotenv, find_dotenv
@@ -21,26 +18,22 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 #### PARAMS ####
 source = 'all_the_news'
-n_topics = 1000
+n_topics = 200
 n_stories = 10
 n_chunk = 500
 is_lsa = False
 
 #### Objects needed in memory for recommendations ####
 prep = Preprocessor(preload_models=True)
-corpus = Corpus()
+# corpus = Corpus()
 rec_page = RecommendationPage(app)
 
 lda_builder = LDABuilder()
 trigram_dictionary = lda_builder.get_corpus_dict(from_scratch=False)
 
-if is_lsa:
-    lsa_builder = LSABuilder(source, lda_builder)
-    similarity_model = LSASimilarity(lsa_builder, n_topics, trigram_dictionary)
-else:
-    similarity_model = LDASimilarity(lda_builder, n_topics, trigram_dictionary) # TODO just use LDA
 
-news_api = NewsAPI(similarity_model.model)
+lda = lda_builder.get_model(n_topics, from_scratch=False)
+news_api = NewsAPI(lda)
 
 @app.route('/')
 def index():
@@ -86,13 +79,11 @@ def recommendations():
     source_id = rec_page.resolve_source_id(source_name)
     bias_code = rec_page.resolve_bias_code(source_id)
     valid_biases = rec_page.resolve_valid_biases(bias_code)
-    print(bias_code, valid_biases)
 
     # make query
-    doc_topics = sorted(similarity_model.model.get_document_topics(bow, minimum_probability=0.05), key=lambda x: -x[1])
-    topics = [{'id': tid, 'words': [w for w, pw in similarity_model.model.show_topic(tid, 5)]} for tid, p in doc_topics]
+    doc_topics = sorted(lda.get_document_topics(bow, minimum_probability=0.05), key=lambda x: -x[1])
+    topics = [{'id': tid, 'words': [w for w, pw in lda.show_topic(tid, 5)]} for tid, p in doc_topics]
     valid_sources = rec_page.get_valid_sources(valid_biases)
-    print(valid_sources)
     rdf = news_api.query(doc_topics, valid_sources, parsed_doc)
 
     # get display info from meta data
@@ -100,7 +91,7 @@ def recommendations():
 
     # Bias filtering
     rdf = rec_page.append_bias(rdf)
-    # rdf = rdf[rdf['bias'].isin(valid_biases)] # add title includes words from top topics
+    rdf = rdf[rdf['bias'].isin(valid_biases)] # add title includes words from top topics
     # fields = ['title', 'publication', 'url', 'description', 'bias_c', 'bias_label','icon_url']
 
     render_data = {

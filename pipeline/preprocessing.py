@@ -4,7 +4,7 @@ from gensim.models.phrases import Phrases, Phraser
 from gensim.models.word2vec import LineSentence
 
 from pipeline.paths import Paths
-from pipeline.utils import *
+from pipeline.prep_utils import *
 
 class Preprocessor():
     """

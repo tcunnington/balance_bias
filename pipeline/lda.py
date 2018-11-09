@@ -1,5 +1,4 @@
 import os
-from pipeline.similarity_model import SimilarityModel
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.word2vec import LineSentence

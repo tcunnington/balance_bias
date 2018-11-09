@@ -1,6 +1,6 @@
-bokeh
-pandas
 python-dotenv
-flask
 gunicorn==19.7.1
 requests==2.18.4
+newspaper3k
+urllib3
+retrying

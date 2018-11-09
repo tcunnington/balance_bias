@@ -1,0 +1,6 @@
+pipeline/data
+pipeline/intermediate
+pipeline/models/similarity
+pipeline/models/ldaviz
+pipeline/models/lsa
+pipeline/models/lda/lda.n1000*

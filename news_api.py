@@ -13,29 +13,6 @@ EVERYTHING_ENDPOINT = '/v2/everything'
 SOURCES_ENDPOINT = '/v2/sources'
 
 
-# # TODO get this from Rec page
-# def resolve_source_id(source_name):
-#     x = source_name.lower().split()
-#     return '-'.join(x)
-
-# # TODO move this
-# def get_sources_by_bias(bias, sources_filter=None):
-#     """
-#
-#     :param bias:
-#     :param sources_filter:
-#     :return:
-#     """
-#     if not isinstance(bias, list):
-#         bias = [bias]
-#
-#     sources = flatten([[resolve_source_id(name) for name in bias_sources_map[b]] for b in bias])
-#     # filter and concat
-#     sources = filter(lambda x: x in sources_filter, sources) if sources_filter is not None else sources
-#     return
-
-
-
 class NewsAPI:
 
     def __init__(self, lda):
