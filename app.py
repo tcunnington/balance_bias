@@ -91,7 +91,7 @@ def recommendations():
 
     # Bias filtering
     rdf = rec_page.append_bias(rdf)
-    rdf = rdf[rdf['bias'].isin(valid_biases)] # add title includes words from top topics
+    rdf = rdf[rdf['bias_code'].isin(valid_biases)] # add title includes words from top topics
     # fields = ['title', 'publication', 'url', 'description', 'bias_c', 'bias_label','icon_url']
 
     render_data = {

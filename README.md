@@ -10,7 +10,11 @@ As an answer to this phenomenon I create BalanceBias: a new recommender with an 
 
 BalanceBias uses natural language processing (NLP) techniques to recommend news articles that a user wouldn’t normally see. Starting with the URL for article they like, it first scrapes the content from the web, then uses topic modeling to find articles with similar content but a different “bias”. The topic model, built with Latent Dirichlet allocation, provides a means to summarize and compare articles together.
 
+![NLP Pipeline](static/imgs/_architecture.png)
+
 ## NLP Pipeline
+
+![NLP Pipeline](static/imgs/_nlp_pipeline.png)
 
 #### Preprocessing and phrase identification
 
@@ -24,9 +28,13 @@ I then ran the phrase model again to discover common trigrams as well.
 
 #### Topic modeling using latent Dirichlet allocation
 
-After identifying phrases up to trigrams I used Gensim's LDAMulticore class to build a topic model. Various values of k, the number of topics, were chosen. According to topic coherence the best value was around 200 topics. However I wanted the model to be sensitive to very specific topics--instead of recommending another article on "politics" for instance, a user would likely want to see another article on "the renegotiation of NAFTA". For this reason I chose to use a value above that the optimal one chosen by topic coherence. Perceived performance improved as a result. 
+After identifying phrases up to trigrams I used Gensim's LDAMulticore class to build a topic model. Various values of k, the number of topics, were chosen. According to topic coherence the best value was around 200 topics. However I wanted the model to be sensitive to very specific topics--instead of recommending another article on "politics" for instance, a user would likely want to see another article on "the renegotiation of NAFTA". For this reason I chose to use a value above that the optimal one chosen by topic coherence. Perceived performance improved as a result.
+
+![NLP Pipeline](static/imgs/_lda_topic1.png) 
 
 ## Future
+
+![NLP Pipeline](static/imgs/_bias_spectrum.png)
 
 An improved bias model is the main direction for future work. Right now the bias is based on the publication it came from, where values where hand picked to conform to this source: https://www.adfontesmedia.com/the-chart-version-3-0-what-exactly-are-we-reading/ 
 I will either hand label by data (again by source) to train a new model, or else use an existing data set. Data sets for building fake news detectors look promising.
